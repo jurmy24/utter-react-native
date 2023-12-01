@@ -1,6 +1,6 @@
 # Utter-app
 
-This is the github repo for the Utter Application. It is where we'll build the cross-platform app for iOS and Android, and it's the private counterpart to the public, more-research focused repo called [utter](https://github.com/jurmy24/utter).
+This is the github repo for the Utter Application. It is where we'll build the cross-platform app for iOS and Android, and it's the production counterpart to the more-research focused repo called [utter](https://github.com/jurmy24/utter).
 
 ## Commit message convention
 
@@ -20,29 +20,3 @@ _Keyword(scope if needed): write the message in the imperative sense without cap
 - Style: A code that is related to styling
 - Test: Adding new test or making changes to existing test
 - Misc: Anything that in no way fits into the other categories
-
-## Using a virtual environment
-
-When using this repo, it is recommended to use a virtual environment and to import the packages from `requirements.txt` to run the code necessary in the relevant folder.
-
-### For mac/linux
-
-- Clone this repository
-- `cd` to the _tech-testing_ folder
-- Create a .venv folder using `python3 -m venv .venv`
-- Activate the .venv using `source .venv/bin/activate`
-- `cd` into the folder of interest within _tech-testing_
-- In order to run the files in that folder, import the relevant dependencies using `pip install -r requirements.txt`
-
-Note: if you want to save the current dependencies list you have in your .venv in `requirements.txt` you can just write `pip freeze > requirements.txt` into the terminal
-
-### For windows
-
-- Clone this repository
-- `cd` to the _tech-testing_ folder
-- Create a .venv folder using `python3 -m venv .venv`
-- Activate the .venv using `. .venv/Scripts/activate`
-- `cd` into the folder of interest within _tech-testing_
-- In order to run the files in that folder, import the relevant dependencies using `pip install -r requirements.txt`
-
-Note: if you want to save the current dependencies list you have in your .venv in `requirements.txt` you can just write `pip freeze > requirements.txt` into the command prompt
