@@ -22,12 +22,14 @@ Note: only on Mac.
 
 - Download and install Xcode
 - Run the command `npm run ios` (you can specify a device by writing eg. `npm run ios -- --simulator="iPhone SE (3rd generation)"`)
+- You can also run `npx expo start`/`npm start` and then press i for ios
 
 **ON ANDROID SIMULATOR**
 
 - Download and install Android Studio and follow this [guide](https://docs.expo.dev/workflow/android-studio-emulator/)
 - Open up the simulator of the android device
-- Run the command `npm run android` or `npx expo start`/`npm start` and then press a for android
+- Run the command `npm run android`
+- You can also run `npx expo start`/`npm start` and then press a for android
 
 ### Visual Studio code tips
 
