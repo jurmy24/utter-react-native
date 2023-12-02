@@ -5,26 +5,32 @@ This is the github repo for the Utter Application. It is where we'll build the c
 ## Top tips
 
 ### How to run
+
 - Clone this repo
 - Make sure you have the latest version of Node.js installed on your computer with the command `node -v`
 - Navigate to the inner **utter-app** directory with `cd utter-app`
 - Create an Expo account (not necessary but recommended)
 
 **ON PHONE**
+
 - Download Expo Go on your smartphone
 - Run the command `npx expo start` or `npm start`
 - Scan the QR code that shows up to display the app live in your expo app
 
 **ON IOS SIMULATOR**
 Note: only on Mac.
+
 - Download and install Xcode
 - Run the command `npm run ios` (you can specify a device by writing eg. `npm run ios -- --simulator="iPhone SE (3rd generation)"`)
 
 **ON ANDROID SIMULATOR**
+
 - Download and install Android Studio and follow this [guide](https://docs.expo.dev/workflow/android-studio-emulator/)
-- TBD
+- Open up the simulator of the android device
+- Run the command `npm run android` or `npx expo start`/`npm start` and then press a for android
 
 ### Visual Studio code tips
+
 - Download the following extensions
   - Material Icon Theme
   - Prettier - Code Formatter
