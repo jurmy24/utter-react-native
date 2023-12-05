@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { View, Text, TextInput, StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
+import Logo from '../../assets/images/Logo_utter.svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const screenWidth = Dimensions.get('window').width;
@@ -16,7 +17,7 @@ const LoginView = () => {
 
   return (
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Image source={require('path-to-your-logo.png')} style={{ width: 300, height: 150 }} />
+      <Logo width={300} height={150} />
       <TextInput
         style={styles.input}
         onChangeText={setUsername}
