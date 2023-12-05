@@ -15,22 +15,18 @@ const OnboardingView = ({ navigation }) => {
       <SafeAreaView style={introStyles.safeArea}>
         <View style={introStyles.container}>
           <Logo style={introStyles.logo}/>
-          <View style={introStyles.textContainer}>
-            <Text style={introStyles.title}>
-              Get your artificial language partner to practice speaking.
-            </Text>
-            <Text style={introStyles.subtitle}>
-              With our AI-powered language partner you can learn your language like a pro.
-            </Text>
-          </View>
-          {/* <TouchableOpacity
-            style={introStyles.button}
-            onPress={() => navigation.navigate('Login')}
-          >
-            <Text style={introStyles.buttonText}>GO TO LOGIN</Text>
-          </TouchableOpacity> */}
-          <ArrowButton onPress={() => navigation.navigate('Login')} />
-          
+          <View style={introStyles.padding}></View>
+            <View style={introStyles.content}>
+              <View style={introStyles.textContainer}>
+                <Text style={introStyles.title}>
+                  Get your artificial language partner to practice speaking.
+                </Text>
+                <Text style={introStyles.subtitle}>
+                  With our AI-powered language partner you can learn your language like a pro.
+                </Text>
+              </View>
+              <ArrowButton onPress={() => navigation.navigate('Login')} />
+            </View>
         </View>
       </SafeAreaView>
     </ImageBackground>

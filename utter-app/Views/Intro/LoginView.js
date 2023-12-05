@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
-import { View, Text, TextInput, StyleSheet, Image, TouchableOpacity, Dimensions } from 'react-native';
+import { View, Text, TextInput, StyleSheet, ImageBackground, TouchableOpacity, Dimensions } from 'react-native';
 import Logo from '../../assets/images/Logo_utter.svg';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { introStyles } from '../../assets/stylesheets/intro_styles';
 
 const screenWidth = Dimensions.get('window').width;
+
+const assetsPath = '../../assets/'
+
 
 const LoginView = () => {
   const [username, setUsername] = useState('');
@@ -16,8 +20,12 @@ const LoginView = () => {
   };
 
   return (
+    <ImageBackground 
+      source={require(assetsPath + 'images/slidingBackgroundWide.png')}
+      style={introStyles.background_style}
+    >
     <View style={{ flex: 1, alignItems: 'center', justifyContent: 'center' }}>
-      <Logo width={300} height={150} />
+      <Logo style={introStyles.logo} />
       <TextInput
         style={styles.input}
         onChangeText={setUsername}
@@ -38,6 +46,7 @@ const LoginView = () => {
       {/* Add navigation to your Sign Up screen */}
       <Text style={styles.signupText}>Don't have an account? <Text style={styles.signupTextBold}>Sign up</Text> now!</Text>
     </View>
+    </ImageBackground>
   );
 };
 
