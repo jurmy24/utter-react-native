@@ -1,35 +1,38 @@
 import React from 'react';
-import { View, Text, Image, TouchableOpacity, Dimensions, ImageBackground, Button } from 'react-native';
+import { View, Text, TouchableOpacity, ImageBackground, SafeAreaView } from 'react-native';
 import Logo from '../../assets/images/Logo_utter.svg';
 import { introStyles } from '../../assets/stylesheets/intro_styles';
-
+import ArrowButton  from './../Components/ArrowButton'
 
 
 const assetsPath = '../../assets/'
-// const { width, height } = Dimensions.get('window'); // Destructure width and height
-
-// const OnboardingView = ({ setIsOnboarding, navigation }) => {
-const OnboardingView = ({navigation }) => {
+const OnboardingView = ({ navigation }) => {
   return (
     <ImageBackground 
-      source={require(assetsPath + 'images/slidingBackgroundWide.png')} // Replace with your image path
+      source={require(assetsPath + 'images/slidingBackgroundWide.png')} 
       style={introStyles.background_style}
     >
-      <Logo width={300} height={150} />
-      <Text style={introStyles.font24_white_bold}>
-        Get your artificial language partner to practice speaking.
-      </Text>
-      <Text style={introStyles.font18_white}>
-        With our AI-powered language partner you can learn your language like a pro.
-      </Text>
-      <Button
-      title="Go to Login"
-      onPress={() => 
-        {
-        // setIsOnboarding(false);
-        navigation.navigate('Login')
-      }}
-    />
+      <SafeAreaView style={introStyles.safeArea}>
+        <View style={introStyles.container}>
+          <Logo style={introStyles.logo}/>
+          <View style={introStyles.textContainer}>
+            <Text style={introStyles.title}>
+              Get your artificial language partner to practice speaking.
+            </Text>
+            <Text style={introStyles.subtitle}>
+              With our AI-powered language partner you can learn your language like a pro.
+            </Text>
+          </View>
+          {/* <TouchableOpacity
+            style={introStyles.button}
+            onPress={() => navigation.navigate('Login')}
+          >
+            <Text style={introStyles.buttonText}>GO TO LOGIN</Text>
+          </TouchableOpacity> */}
+          <ArrowButton onPress={() => navigation.navigate('Login')} />
+          
+        </View>
+      </SafeAreaView>
     </ImageBackground>
   );
 };
