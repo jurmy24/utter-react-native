@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, TouchableOpacity, StyleSheet, Dimensions, SafeAreaView } from 'react-native';
-// import Voice from '@react-native-voice/voice';
+import { View, Text, TouchableOpacity, StyleSheet, Dimensions, SafeAreaView, Image } from 'react-native';
+import Voice from '@react-native-voice/voice';
 import Tts from 'react-native-tts';
 // import PartnerImage from './PartnerImage'; // Assuming you have this component
 // import LoadingBalls from './LoadingBalls'; // Assuming you have this component
@@ -8,7 +8,7 @@ import Tts from 'react-native-tts';
 const screenWidth = Dimensions.get('window').width;
 const screenHeight = Dimensions.get('window').height;
 
-const CallView = () => {
+const CallView = ({navigation}) => {
   const [isRecording, setIsRecording] = useState(false);
   const [userTranscript, setUserTranscript] = useState('');
   const [isLoading, setIsLoading] = useState(false);
@@ -48,19 +48,19 @@ const CallView = () => {
     setIsLoading(false);
   };
 
-  if (isLoading) {
-    return <LoadingBalls />;
-  }
+  // if (isLoading) {
+  //   return <LoadingBalls />;
+  // }
 
   return (
     <SafeAreaView style={styles.container}>
-      <PartnerImage size={120} />
+      <Image  source={require('./../../assets/avatars/tim_avatar.png')}  style={{ width: 200, height: 200, borderRadius: 10 }}/>
       {/* Add other UI components here */}
       <TouchableOpacity onPress={startRecording} onRelease={endRecording} style={styles.recordButton}>
         <Text>{isRecording ? 'Recording...' : 'Press to speak'}</Text>
       </TouchableOpacity>
       {/* Add a button to end the call */}
-      <TouchableOpacity onPress={() => {/* Logic to end the call */}} style={styles.endCallButton}>
+      <TouchableOpacity onPress={() => navigation.navigate('Chat')} style={styles.endCallButton}>
         <Text>End Call</Text>
       </TouchableOpacity>
     </SafeAreaView>
