@@ -9,7 +9,7 @@ const screenWidth = Dimensions.get('window').width;
 const assetsPath = '../../assets/'
 
 
-const LoginView = () => {
+const LoginView = ({ navigation }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
 
@@ -40,7 +40,7 @@ const LoginView = () => {
         placeholder="Password"
         secureTextEntry
       />
-      <TouchableOpacity onPress={handleLogin} style={styles.button}>
+      <TouchableOpacity onPress={() => navigation.navigate('Home')} style={styles.button}>
         <Text style={styles.buttonText}>Login</Text>
       </TouchableOpacity>
       {/* Add navigation to your Sign Up screen */}

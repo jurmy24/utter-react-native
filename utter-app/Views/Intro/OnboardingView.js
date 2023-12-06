@@ -1,5 +1,5 @@
 import React from 'react';
-import { View, Text, TouchableOpacity, ImageBackground, SafeAreaView } from 'react-native';
+import { View, Text, ImageBackground, SafeAreaView } from 'react-native';
 import Logo from '../../assets/images/Logo_utter.svg';
 import { introStyles } from '../../assets/stylesheets/intro_styles';
 import ArrowButton  from './../Components/ArrowButton'
