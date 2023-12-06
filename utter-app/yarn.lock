@@ -3160,6 +3160,13 @@ expo-modules-core@1.5.12:
     compare-versions "^3.4.0"
     invariant "^2.2.4"
 
+expo-splash-screen@~0.20.5:
+  version "0.20.5"
+  resolved "https://registry.yarnpkg.com/expo-splash-screen/-/expo-splash-screen-0.20.5.tgz#ebeba3e3977606830f74f506ab2cc25042bb7efd"
+  integrity sha512-nTALYdjHpeEA30rdOWSguxn72ctv8WM8ptuUgpfRgsWyn4i6rwYds/rBXisX69XO5fg+XjHAQqijGx/b28+3tg==
+  dependencies:
+    "@expo/prebuild-config" "6.2.6"
+
 expo-status-bar@~1.6.0:
   version "1.6.0"
   resolved "https://registry.yarnpkg.com/expo-status-bar/-/expo-status-bar-1.6.0.tgz#e79ffdb9a84d2e0ec9a0dc7392d9ab364fefa9cf"
@@ -6379,6 +6386,11 @@ which@^2.0.1:
   integrity sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==
   dependencies:
     isexe "^2.0.0"
+
+whisper.rn@^0.3.9:
+  version "0.3.9"
+  resolved "https://registry.yarnpkg.com/whisper.rn/-/whisper.rn-0.3.9.tgz#fe59466021ddd53f83397054835011f71ed0c4fd"
+  integrity sha512-y2hsJ6IpUqtYUZA7YrtGqU3pTXNFzF8Piu8Ch4yAhBB6tyZcEl113e/X10xkd+bVfeIbrSZS2QJZQ4CBfbXS3g==
 
 wonka@^4.0.14:
   version "4.0.15"
