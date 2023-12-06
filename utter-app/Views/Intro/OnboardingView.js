@@ -3,6 +3,7 @@ import { View, Text, ImageBackground, SafeAreaView } from 'react-native';
 import Logo from '../../assets/images/Logo_utter.svg';
 import { introStyles } from '../../assets/stylesheets/intro_styles';
 import ArrowButton  from './../Components/ArrowButton'
+import { generalStyles } from '../../assets/stylesheets/general_styles';
 
 
 const assetsPath = '../../assets/'
@@ -10,9 +11,9 @@ const OnboardingView = ({ navigation }) => {
   return (
     <ImageBackground 
       source={require(assetsPath + 'images/slidingBackgroundWide.png')} 
-      style={introStyles.background_style}
+      style={generalStyles.background_style}
     >
-      <SafeAreaView style={introStyles.safeArea}>
+      <SafeAreaView style={generalStyles.safeArea}>
         <View style={introStyles.container}>
           <Logo style={introStyles.logo}/>
           <View style={introStyles.padding}></View>
