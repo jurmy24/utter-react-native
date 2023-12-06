@@ -6,10 +6,6 @@ const logoHeight = screenHeight*0.15; // The height of your logo
 
 export const introStyles = StyleSheet.create({
 
-    safeArea: {
-        flex: 1,
-        backgroundColor: 'transparent',
-      },
       padding: {
         paddingHorizontal: 30,
         paddingVertical: 60,
@@ -28,13 +24,7 @@ export const introStyles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'flex-start',
         paddingTop: logoHeight*0.5,
-      },
-      background_style: { 
-        ...StyleSheet.absoluteFillObject,
-        resizeMode: 'cover',
-        alignItems: 'center', 
-        justifyContent: 'center' },
-      
+      },   
       logo: {
         position: 'absolute',
         top: screenHeight * 0.15,
@@ -74,5 +64,30 @@ export const introStyles = StyleSheet.create({
         fontSize: 18,
         color: '#ffffff',
         fontWeight: '600',
+      },
+      input: {
+        height: 50,
+        margin: 12,
+        borderWidth: 1,
+        padding: 10,
+        width: screenWidth - 24,
+        backgroundColor: '#FFFFFF',
+        borderRadius: 8,
+      },
+      loginButton: {
+        backgroundColor: '#5A5AF6', // Use a similar blue color
+        padding: 12,
+        borderRadius: 8,
+      },
+      loginButtonText: {
+        color: '#FFFFFF',
+        fontWeight: 'bold',
+      },
+      signupText: {
+        color: '#FFFFFF',
+      },
+      signupTextBold: {
+        fontWeight: 'bold',
+        textDecorationLine: 'underline',
       },
     });
