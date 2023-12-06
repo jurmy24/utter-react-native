@@ -1,19 +1,25 @@
 import React from 'react';
-import { View, SafeAreaView, ScrollView, StyleSheet, Dimensions, TouchableOpacity, Text } from 'react-native';
+import { View, SafeAreaView, ScrollView, StyleSheet, Dimensions, TouchableOpacity, Text, ImageBackground} from 'react-native';
 import { useNavigation } from '@react-navigation/native';
 import LanguagePartnerRow from './LanguagePartnerRow';
+import { generalStyles } from '../../assets/stylesheets/general_styles';
+
+const assetsPath = '../../assets/'
 
 const HomeView = () => {
   const screenWidth = Dimensions.get('window').width;
+  const screenHeight = Dimensions.get('window').height;
   const navigation = useNavigation(); // This hook is provided by React Navigation
 
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <View style={[styles.slidingBackground, { width: screenWidth }]}>
-        {/* SlidingBackgroundView equivalent goes here */}
-      </View>
 
-      <ScrollView style={styles.container}>
+    <ImageBackground 
+      source={require(assetsPath + 'images/slidingBackgroundWide.png')}
+      style={generalStyles.background_style}
+    >
+    <SafeAreaView style={generalStyles.safeArea}>
+
+      <ScrollView style={generalStyles.languagePartnerListContainer}>
         <View style={styles.languagePartnersList}>
           {/* This TouchableOpacity should navigate to the ChatView when pressed */}
           <TouchableOpacity onPress={() => navigation.navigate('Chat')}>
@@ -30,29 +36,12 @@ const HomeView = () => {
         <Text style={styles.addButtonText}>+</Text>
       </TouchableOpacity>
     </SafeAreaView>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  slidingBackground: {
-    // Style for your sliding background
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-  },
-  container: {
-    flex: 1,
-    // Add padding or margin as needed
-  },
-  languagePartnersList: {
-    marginTop: 30, // Adjust as needed
-    backgroundColor: 'white',
-    borderTopLeftRadius: 30,
-    borderTopRightRadius: 30,
-    // Add shadow or other styles as needed
-  },
+  
   divider: {
     height: 1,
     backgroundColor: 'lightgray',
@@ -61,16 +50,16 @@ const styles = StyleSheet.create({
   addButton: {
     position: 'absolute',
     right: 15,
-    top: 15,
+    top: 65,
     width: 44,
     height: 44,
     borderRadius: 22,
-    backgroundColor: 'blue', // Replace with your theme color
+    backgroundColor: '#5A5AF6',
     justifyContent: 'center',
     alignItems: 'center',
   },
   addButtonText: {
-    fontSize: 22,
+    fontSize: 24,
     color: 'white',
   },
 });
