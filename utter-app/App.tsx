@@ -5,6 +5,7 @@ import {
   Text,
   TouchableOpacity,
   Platform,
+  PermissionsAndroid,
 } from "react-native";
 import { initWhisper, AudioSessionIos } from "whisper.rn";
 
@@ -14,6 +15,19 @@ const App = () => {
   const [isCapturing, setIsCapturing] = useState(false);
   const [transcription, setTranscription] = useState("");
   const [stopFunction, setStopFunction] = useState<(() => void) | null>(null);
+
+  // Request permissions from android
+  if (Platform.OS === "android") {
+    // Request record audio permission
+    // @ts-ignore
+    PermissionsAndroid.request(PermissionsAndroid.PERMISSIONS.RECORD_AUDIO, {
+      title: "Whisper Audio Permission",
+      message: "Whisper needs access to your microphone",
+      buttonNeutral: "Ask Me Later",
+      buttonNegative: "Cancel",
+      buttonPositive: "OK",
+    });
+  }
 
   useEffect(() => {
     const setupWhisper = async () => {
@@ -77,21 +91,6 @@ const App = () => {
         await AudioSessionIos.setActive(true);
       }
 
-      if (Platform.OS === "android") {
-        // Request record audio permission
-        // @ts-ignore
-        PermissionsAndroid.request(
-          PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
-          {
-            title: "Whisper Audio Permission",
-            message: "Whisper needs access to your microphone",
-            buttonNeutral: "Ask Me Later",
-            buttonNegative: "Cancel",
-            buttonPositive: "OK",
-          }
-        );
-      }
-
       subscribe(
         (evt: {
           isCapturing: any;
@@ -103,9 +102,9 @@ const App = () => {
           console.log(
             `Realtime transcribing: ${isCapturing ? "ON" : "OFF"}\n` +
               // The inference text result from audio record:
-              `Result: ${data.result}\n\n` +
+              `Result: ${data.result}\n` +
               `Process time: ${processTime}ms\n` +
-              `Recording time: ${recordingTime}ms`
+              `Recording time: ${recordingTime}ms\n\n`
           );
           setTranscription(data.result);
           setIsCapturing(isCapturing);
@@ -118,12 +117,6 @@ const App = () => {
     } catch (error) {
       console.error("Error starting real-time transcription:", error);
     }
-
-    // subscribe((evt: { isCapturing?: any; data?: any }) => {
-    //   const { data } = evt;
-    //   setTranscription(data.result);
-    //   setIsCapturing(evt.isCapturing);
-    // });
   };
 
   const stopTranscription = () => {
