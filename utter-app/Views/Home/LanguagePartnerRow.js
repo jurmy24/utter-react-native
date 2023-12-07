@@ -1,13 +1,11 @@
 import React from 'react';
 import { View, Text, Image, StyleSheet } from 'react-native';
+import Tim from '../Components/./Avatars';
 
 const LanguagePartnerRow = () => {
   return (
     <View style={styles.row}>
-      <Image
-        source={require('./../../assets/avatars/tim_avatar.png')} // Replace with the path to your image
-        style={styles.partnerImage}
-      />
+      <Tim />
       <View style={styles.textContainer}>
         <Text style={styles.name}>Tim</Text>
         <Text style={styles.details}>Plans on the weekend, taking a walk, coffee, ordering...</Text>
