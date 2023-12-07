@@ -59,45 +59,65 @@ const App = () => {
       // Voice Activity Detection - Start transcribing when speech is detected
       // useVad: true,
     };
-    const { stop, subscribe } = await whisperContext.transcribeRealtime(
-      options
-    );
 
-    setStopFunction(() => stop); // Store the stop function
-
-    // Optional: Manage Audio Session for iOS
-    if (Platform.OS === "ios") {
-      await AudioSessionIos.setCategory(
-        AudioSessionIos.Category.PlayAndRecord,
-        [AudioSessionIos.CategoryOption.MixWithOthers]
+    try {
+      // Your transcription start logic
+      const { stop, subscribe } = await whisperContext.transcribeRealtime(
+        options
       );
-      await AudioSessionIos.setMode(AudioSessionIos.Mode.Default);
-      await AudioSessionIos.setActive(true);
-    }
+      setStopFunction(() => stop); // Store the stop function
 
-    subscribe(
-      (evt: {
-        isCapturing: any;
-        data: any;
-        processTime: any;
-        recordingTime: any;
-      }) => {
-        const { isCapturing, data, processTime, recordingTime } = evt;
-        console.log(
-          `Realtime transcribing: ${isCapturing ? "ON" : "OFF"}\n` +
-            // The inference text result from audio record:
-            `Result: ${data.result}\n\n` +
-            `Process time: ${processTime}ms\n` +
-            `Recording time: ${recordingTime}ms`
+      // Optional: Manage Audio Session for iOS
+      if (Platform.OS === "ios") {
+        await AudioSessionIos.setCategory(
+          AudioSessionIos.Category.PlayAndRecord,
+          [AudioSessionIos.CategoryOption.MixWithOthers]
         );
-        setTranscription(data.result);
-        setIsCapturing(isCapturing);
-
-        if (!isCapturing) {
-          console.log("Finished realtime transcribing");
-        }
+        await AudioSessionIos.setMode(AudioSessionIos.Mode.Default);
+        await AudioSessionIos.setActive(true);
       }
-    );
+
+      if (Platform.OS === "android") {
+        // Request record audio permission
+        // @ts-ignore
+        PermissionsAndroid.request(
+          PermissionsAndroid.PERMISSIONS.RECORD_AUDIO,
+          {
+            title: "Whisper Audio Permission",
+            message: "Whisper needs access to your microphone",
+            buttonNeutral: "Ask Me Later",
+            buttonNegative: "Cancel",
+            buttonPositive: "OK",
+          }
+        );
+      }
+
+      subscribe(
+        (evt: {
+          isCapturing: any;
+          data: any;
+          processTime: any;
+          recordingTime: any;
+        }) => {
+          const { isCapturing, data, processTime, recordingTime } = evt;
+          console.log(
+            `Realtime transcribing: ${isCapturing ? "ON" : "OFF"}\n` +
+              // The inference text result from audio record:
+              `Result: ${data.result}\n\n` +
+              `Process time: ${processTime}ms\n` +
+              `Recording time: ${recordingTime}ms`
+          );
+          setTranscription(data.result);
+          setIsCapturing(isCapturing);
+
+          if (!isCapturing) {
+            console.log("Finished realtime transcribing");
+          }
+        }
+      );
+    } catch (error) {
+      console.error("Error starting real-time transcription:", error);
+    }
 
     // subscribe((evt: { isCapturing?: any; data?: any }) => {
     //   const { data } = evt;
