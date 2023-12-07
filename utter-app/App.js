@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import {
   View,
   TextInput,
@@ -36,13 +36,24 @@ export default function App() {
     await playAudio(audioFilePath);
   };
 
+  const scrollViewRef = useRef(); // Create a ref for the ScrollView
+
+  // Scroll to the bottom every time messages change
+  useEffect(() => {
+    if (scrollViewRef.current) {
+      setTimeout(() => {
+        scrollViewRef.current.scrollToEnd({ animated: true });
+      }, 100); // Adjust the timeout as needed
+    }
+  }, [messages]);
+
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
       >
-        <ScrollView style={styles.messagesContainer}>
+        <ScrollView style={styles.messagesContainer} ref={scrollViewRef}>
           {messages.map((msg, index) => (
             <View
               key={index}
