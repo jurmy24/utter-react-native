@@ -31,4 +31,46 @@ export const generalStyles = StyleSheet.create({
             backgroundColor: '#FFFFFF',
             // Add shadow or other styles as needed
           },
-    });
+
+    divider: {
+            height: 1,
+            backgroundColor: 'lightgray',
+            marginHorizontal: 15,
+          },
+        
+    addButton: {
+            position: 'absolute',
+            right: 15,
+            top: 65,
+            width: 44,
+            height: 44,
+            borderRadius: 22,
+            backgroundColor: '#5A5AF6',
+            justifyContent: 'center',
+            alignItems: 'center',
+          },
+
+    circularButtonText: {
+            fontSize: 24,
+            color: 'white',
+          },
+
+    languagePartnerTextContainer: {
+            width: screenWidth,
+            justifyContent: 'center',
+            marginLeft: 12, // Spacing between image and text
+          },
+
+    wrappedText: {
+      flexWrap: 'wrap',
+      fontSize: 14, // Set font size
+      color: 'gray', // Set text color
+          },
+
+    partnerImage: {
+            width: 50, // Set the image width
+            height: 50, // Set the image height
+            borderRadius: 25, // Make the image circular
+            // Add any additional styling for the image
+          },
+              });
