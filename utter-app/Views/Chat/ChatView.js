@@ -49,7 +49,7 @@ const ChatView = () => {
           placeholder="Type something..."
           onSubmitEditing={handleSend}
         />
-        <TouchableOpacity onPress={handleJoinCall} style={styles.callButton}>
+        <TouchableOpacity onPress={() => navigation.navigate('Call')} style={styles.callButton}>
             {/* Here above we should use the handleJoinCall funciton later */}
           <Text style={styles.callButtonText}>Join Talk</Text>
         </TouchableOpacity>
