@@ -5,7 +5,7 @@ const useTextModel = () => {
   const [messages, setMessages] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
 
-  const handleTextSubmit = async (text) => {
+  const submitMessage = async (text) => {
     setMessages((oldMessages) => [...oldMessages, { text, sender: "user" }]);
     setIsLoading(true); // Start loading
 
@@ -20,6 +20,7 @@ const useTextModel = () => {
       setMessages((oldMessages) => [...oldMessages, newMessage]);
 
       setIsLoading(false); // End loading
+      return responseText;
     } catch (error) {
       console.error("Error with OpenAI:", error);
       setIsLoading(false); // End loading in case of error
@@ -51,7 +52,7 @@ const useTextModel = () => {
     }
   };
 
-  return { messages, handleTextSubmit, isLoading };
+  return { messages, submitMessage, isLoading };
 };
 
 export default useTextModel;
