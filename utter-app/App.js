@@ -26,6 +26,7 @@ export default function App() {
   const handleSendText = async () => {
     submitMessage(inputText);
     setInputText("");
+    console.log(messages);
   };
 
   const handleSendTranscription = async () => {
