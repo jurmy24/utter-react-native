@@ -55,9 +55,8 @@ export default function App() {
 
     if (uri) {
       try {
-        console.log("Are we here?");
         const response = await uploadAudioFile(uri);
-        console.log("Upload Response:", response);
+        console.log("Uploaded Response:", response);
         // Handle the response, such as displaying the transcription or processing further
       } catch (error) {
         console.error("Error during file upload:", error);
@@ -67,6 +66,13 @@ export default function App() {
       console.log("No recording found");
       // Optionally handle the case where there is no recording
     }
+  };
+
+  // Example client-side code
+  const sendMessage = async (text) => {
+    // Only send the latest message
+    const response = await axios.post("/chat-model/submit", { message: text });
+    // Handle the response
   };
 
   // const handleSendTranscription = async () => {
