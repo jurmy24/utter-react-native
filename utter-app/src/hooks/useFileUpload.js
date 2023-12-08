@@ -14,11 +14,6 @@ const useFileUpload = () => {
     console.log(audioFileUri);
     const fileExtension = getFileExtension(audioFileUri);
     const formData = new FormData();
-    // formData.append("file", {
-    //   uri: audioFileUri,
-    //   type: "audio/mp3",
-    //   name: "audiofile.",
-    // });
     formData.append("file", {
       uri: audioFileUri,
       type: "video/3gpp",
@@ -36,7 +31,8 @@ const useFileUpload = () => {
         }
       );
       setUploadStatus("success");
-      return response.data;
+      // console.log(response.data);
+      return response.data.transcription;
     } catch (err) {
       setUploadStatus("failed");
       setError(err);
