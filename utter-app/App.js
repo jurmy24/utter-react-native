@@ -12,16 +12,22 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { BallIndicator } from "react-native-indicators";
-import useVoiceRecModel from "./src/hooks/voiceRecModel";
+// import useVoiceRecModel from "./src/hooks/voiceRecModel";
 import useTextModel from "./src/hooks/textModel";
 import useSpeechSynthModel from "./src/hooks/speechSynthModel";
+import useFileUpload from "./hooks/useFileUpload"; // Import the new hook
+import useAudioRecorder from "./hooks/useAudioRecorder"; // Import the new hook
 
 export default function App() {
   const [inputText, setInputText] = useState("");
-  const { isCapturing, transcription, startTranscription, stopTranscription } =
-    useVoiceRecModel();
+  // const { isCapturing, transcription, startTranscription, stopTranscription } =
+  // useVoiceRecModel();
+  const { isRecording, startRecording, stopRecording, recordedUri } =
+    useAudioRecorder();
+
   const { messages, submitMessage, isLoading } = useTextModel();
   const { synthesizeText, playAudio } = useSpeechSynthModel();
+  const { uploadAudioFile, uploadStatus, error } = useFileUpload();
 
   const handleSendText = async () => {
     submitMessage(inputText);
@@ -29,12 +35,57 @@ export default function App() {
     console.log(messages);
   };
 
-  const handleSendTranscription = async () => {
-    stopTranscription();
-    const response = await submitMessage(transcription);
-    const audioFilePath = await synthesizeText(response);
-    await playAudio(audioFilePath);
+  const handleStartRecording = () => {
+    startRecording();
   };
+
+  const handleStopRecording = async () => {
+    await stopRecording();
+    // You can now use 'recordedUri' to play the recorded audio or upload it
+  };
+
+  const handleSendRecording = async () => {
+    await handleStopRecording();
+    // if (isRecording) {
+    //   await stopRecording(); // Stop the recording if it's still happening
+    // }
+
+    if (recordedUri) {
+      try {
+        const response = await uploadAudioFile(recordedUri);
+        console.log("Upload Response:", response);
+        // Handle the response, such as displaying the transcription or processing further
+      } catch (error) {
+        console.error("Error during file upload:", error);
+        // Handle errors in UI, such as showing an error message
+      }
+    } else {
+      console.log("No recording found");
+      // Optionally handle the case where there is no recording
+    }
+  };
+
+  // const handleSendTranscription = async () => {
+  //   stopTranscription();
+  //   const response = await submitMessage(transcription);
+  //   const audioFilePath = await synthesizeText(response);
+  //   await playAudio(audioFilePath);
+  // };
+
+  // const handleSendTranscription = async () => {
+  //   // stopTranscription();
+
+  //   // Example URI, replace with actual file URI
+  //   const audioFileUri = "path/to/your/audioFile.mp3";
+
+  //   try {
+  //     await uploadAudioFile(audioFileUri);
+  //     // handle the response
+  //   } catch (error) {
+  //     console.error("Error during file upload:", error);
+  //     // Handle errors in UI
+  //   }
+  // };
 
   const scrollViewRef = useRef(); // Create a ref for the ScrollView
 
@@ -67,8 +118,8 @@ export default function App() {
         </ScrollView>
         <View style={styles.inputContainer}>
           <TouchableOpacity
-            onPressIn={startTranscription}
-            onPressOut={handleSendTranscription}
+            onPressIn={handleStartRecording}
+            onPressOut={handleSendRecording}
             style={styles.transcriptionButton}
           >
             <Icon
