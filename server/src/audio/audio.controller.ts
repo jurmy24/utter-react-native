@@ -17,6 +17,7 @@ export class AudioController {
   @UseInterceptors(FileInterceptor('file'))
   async uploadFile(@UploadedFile() file: Express.Multer.File, @Res() response: Response) {
     if (!file) {
+      console.log("NO FILE PROVIDED");
       return response.status(HttpStatus.BAD_REQUEST).json({ message: 'No file provided' });
     }
 
@@ -24,6 +25,7 @@ export class AudioController {
       const filePath = await this.audioService.storeFile(file);
       return response.status(HttpStatus.OK).json({ message: 'File uploaded successfully', path: filePath });
     } catch (error) {
+      console.log("ERROR UPLOADING FILE - INTERNAL SERVER ERROR");
       return response.status(HttpStatus.INTERNAL_SERVER_ERROR).json({ message: 'Error uploading file', error: error.message });
     }
   }

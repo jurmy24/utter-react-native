@@ -15,8 +15,8 @@ import { BallIndicator } from "react-native-indicators";
 // import useVoiceRecModel from "./src/hooks/voiceRecModel";
 import useTextModel from "./src/hooks/textModel";
 import useSpeechSynthModel from "./src/hooks/speechSynthModel";
-import useFileUpload from "./hooks/useFileUpload"; // Import the new hook
-import useAudioRecorder from "./hooks/useAudioRecorder"; // Import the new hook
+import useFileUpload from "./src/hooks/useFileUpload"; // Import the new hook
+import useAudioRecorder from "./src/hooks/useAudioRecorder"; // Import the new hook
 
 export default function App() {
   const [inputText, setInputText] = useState("");
@@ -39,20 +39,24 @@ export default function App() {
     startRecording();
   };
 
-  const handleStopRecording = async () => {
-    await stopRecording();
-    // You can now use 'recordedUri' to play the recorded audio or upload it
-  };
+  // const handleStopRecording = async () => {
+  //   await stopRecording();
+  //   // You can now use 'recordedUri' to play the recorded audio or upload it
+  // };
 
   const handleSendRecording = async () => {
-    await handleStopRecording();
-    // if (isRecording) {
-    //   await stopRecording(); // Stop the recording if it's still happening
-    // }
+    let uri;
+    // await handleStopRecording();
+    if (isRecording) {
+      uri = await stopRecording(); // Stop the recording if it's still happening
+    } else {
+      console.error("I think the audio message was too short");
+    }
 
-    if (recordedUri) {
+    if (uri) {
       try {
-        const response = await uploadAudioFile(recordedUri);
+        console.log("Are we here?");
+        const response = await uploadAudioFile(uri);
         console.log("Upload Response:", response);
         // Handle the response, such as displaying the transcription or processing further
       } catch (error) {
@@ -125,7 +129,7 @@ export default function App() {
             <Icon
               name="microphone"
               size={25}
-              color={isCapturing ? "red" : "blue"}
+              color={isRecording ? "red" : "blue"}
             />
           </TouchableOpacity>
           <TextInput

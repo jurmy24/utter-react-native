@@ -34,6 +34,7 @@ const useAudioRecorder = () => {
     const uri = recording.getURI();
     setRecordedUri(uri); // Save the recorded file's URI
     setRecording(null);
+    return uri; // return the uri directly
   };
 
   return { isRecording, startRecording, stopRecording, recordedUri };
