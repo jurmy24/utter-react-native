@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Dimensions,
 } from "react-native";
-import Logo from "../../assets/images/Logo_utter.svg";
+// import Logo from "../../assets/images/Logo_utter.svg";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { introStyles } from "../../assets/stylesheets/intro_styles";
 import { generalStyles } from "../../assets/stylesheets/general_styles";
@@ -32,7 +32,7 @@ const LoginView = ({ navigation }) => {
       style={generalStyles.background_style}
     >
       <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
-        <Logo style={introStyles.logo} />
+        {/* <Logo style={introStyles.logo} /> */}
         <TextInput
           style={introStyles.input}
           onChangeText={setUsername}

@@ -8,8 +8,6 @@ import {
   SafeAreaView,
   Image,
 } from "react-native";
-import Voice from "@react-native-voice/voice";
-import Tts from "react-native-tts";
 // import PartnerImage from './PartnerImage'; // Assuming you have this component
 // import LoadingBalls from './LoadingBalls'; // Assuming you have this component
 
@@ -40,19 +38,19 @@ const CallView = ({ navigation }) => {
 
   const startRecording = () => {
     setIsRecording(true);
-    Voice.start("en-US"); // Start recording
+    // Voice.start("en-US"); // Start recording
   };
 
   const endRecording = () => {
     setIsRecording(false);
-    Voice.stop(); // Stop recording
+    // Voice.stop(); // Stop recording
   };
 
   const sendMessage = () => {
     setIsLoading(true);
     // Logic to send the userTranscript to your chat model and get a response
     // After getting the response, use Tts to speak out the response
-    Tts.speak("This is the response."); // Replace with actual response
+    // Tts.speak("This is the response."); // Replace with actual response
     setIsLoading(false);
   };
 
