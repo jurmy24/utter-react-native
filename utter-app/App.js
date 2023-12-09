@@ -12,41 +12,33 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { BallIndicator } from "react-native-indicators";
-// import useVoiceRecModel from "./src/hooks/voiceRecModel";
 import useTextModel from "./src/hooks/textModel";
-import useSpeechSynthModel from "./src/hooks/speechSynthModel";
 import useFileUpload from "./src/hooks/useFileUpload"; // Import the new hook
 import useAudioRecorder from "./src/hooks/useAudioRecorder"; // Import the new hook
 
 export default function App() {
   const [inputText, setInputText] = useState("");
-  // const { isCapturing, transcription, startTranscription, stopTranscription } =
-  // useVoiceRecModel();
-  const { isRecording, startRecording, stopRecording, recordedUri } =
-    useAudioRecorder();
-
-  const { messages, submitMessage, isLoading } = useTextModel();
-  const { synthesizeText, playAudio } = useSpeechSynthModel();
+  const { isRecording, startRecording, stopRecording } = useAudioRecorder();
+  const { submitMessage } = useTextModel();
   const { uploadAudioFile, uploadStatus, error } = useFileUpload();
+  const [isLoading, setIsLoading] = useState(false);
 
+  /*  ----------Handle textual submission----------- */
   const handleSendText = async () => {
-    submitMessage(inputText);
+    setIsLoading(true); // Start loading
+    console.log("This is the input text:", inputText);
+    await submitMessage(inputText);
     setInputText("");
-    console.log(messages);
+    setIsLoading(false); // Stop loading
   };
 
+  /* -----------Handle verbal submission------------- */
   const handleStartRecording = () => {
     startRecording();
   };
-
-  // const handleStopRecording = async () => {
-  //   await stopRecording();
-  //   // You can now use 'recordedUri' to play the recorded audio or upload it
-  // };
-
   const handleSendRecording = async () => {
+    setIsLoading(true); // Start loading
     let uri;
-    // await handleStopRecording();
     if (isRecording) {
       uri = await stopRecording(); // Stop the recording if it's still happening
     } else {
@@ -55,9 +47,9 @@ export default function App() {
 
     if (uri) {
       try {
-        const response = await uploadAudioFile(uri);
-        console.log("Uploaded Response:", response);
-        // Handle the response, such as displaying the transcription or processing further
+        const transcription = await uploadAudioFile(uri);
+        console.log("Transcribed audio file:", transcription);
+        await submitMessage(transcription); // TODO: sort out message receival
       } catch (error) {
         console.error("Error during file upload:", error);
         // Handle errors in UI, such as showing an error message
@@ -66,56 +58,29 @@ export default function App() {
       console.log("No recording found");
       // Optionally handle the case where there is no recording
     }
+    setIsLoading(false); // Stop loading
   };
 
-  // Example client-side code
-  const sendMessage = async (text) => {
-    // Only send the latest message
-    const response = await axios.post("/chat-model/submit", { message: text });
-    // Handle the response
-  };
-
-  // const handleSendTranscription = async () => {
-  //   stopTranscription();
-  //   const response = await submitMessage(transcription);
-  //   const audioFilePath = await synthesizeText(response);
-  //   await playAudio(audioFilePath);
-  // };
-
-  // const handleSendTranscription = async () => {
-  //   // stopTranscription();
-
-  //   // Example URI, replace with actual file URI
-  //   const audioFileUri = "path/to/your/audioFile.mp3";
-
-  //   try {
-  //     await uploadAudioFile(audioFileUri);
-  //     // handle the response
-  //   } catch (error) {
-  //     console.error("Error during file upload:", error);
-  //     // Handle errors in UI
+  /*  ---------------Scroll to the bottom every time messages change----------- */
+  // const scrollViewRef = useRef(); // Create a ref for the ScrollView
+  // useEffect(() => {
+  //   if (scrollViewRef.current) {
+  //     setTimeout(() => {
+  //       scrollViewRef.current.scrollToEnd({ animated: true });
+  //     }, 100); // Adjust the timeout as needed
   //   }
-  // };
+  // }, [messages]);
 
-  const scrollViewRef = useRef(); // Create a ref for the ScrollView
-
-  // Scroll to the bottom every time messages change
-  useEffect(() => {
-    if (scrollViewRef.current) {
-      setTimeout(() => {
-        scrollViewRef.current.scrollToEnd({ animated: true });
-      }, 100); // Adjust the timeout as needed
-    }
-  }, [messages]);
-
+  /*  ----------View----------- */
   return (
     <SafeAreaView style={{ flex: 1 }}>
       <KeyboardAvoidingView
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
       >
-        <ScrollView style={styles.messagesContainer} ref={scrollViewRef}>
-          {messages.map((msg, index) => (
+        <ScrollView style={styles.messagesContainer}>
+          {/*ref={scrollViewRef}*/}
+          {/* {messages.map((msg, index) => (
             <View
               key={index}
               style={
@@ -124,7 +89,7 @@ export default function App() {
             >
               <Text>{msg.text}</Text>
             </View>
-          ))}
+          ))} */}
         </ScrollView>
         <View style={styles.inputContainer}>
           <TouchableOpacity

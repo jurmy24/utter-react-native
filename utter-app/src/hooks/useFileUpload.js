@@ -22,7 +22,7 @@ const useFileUpload = () => {
 
     try {
       const response = await axios.post(
-        "http://130.229.152.253:3000/transcription/upload",
+        "http://130.229.177.235:3000/transcription/upload",
         formData,
         {
           headers: {
