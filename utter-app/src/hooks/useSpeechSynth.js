@@ -1,38 +1,34 @@
-import AWS from "aws-sdk";
 import * as FileSystem from "expo-file-system";
 import { Audio } from "expo-av";
+import axios from "axios";
+import base64 from "react-native-base64";
 
-const useSpeechSynthModel = () => {
-  AWS.config.update({
-    accessKeyId: "AKIAZPFZDFGGBQA7HYVB",
-    secretAccessKey: "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",
-    region: "eu-west-3",
-  });
-
+const useSpeechSynth = () => {
   const synthesizeText = async (text) => {
-    const Polly = new AWS.Polly();
-
-    const params = {
-      Text: text,
-      OutputFormat: "mp3",
-      Engine: "neural",
-      VoiceId: "Joanna", // You can choose different voices
-    };
-
     try {
-      const pollyResponse = await Polly.synthesizeSpeech(params).promise();
+      const response = await axios.post(
+        "http://130.229.177.235:3000/speech-synthesis/synthesize",
+        { text },
+        { responseType: "arraybuffer" }
+      );
+
+      // Convert the audio stream to a base64 string
+      const base64Audio = base64.encodeFromByteArray(
+        new Uint8Array(response.data)
+      );
+
+      // Handle the audio stream returned from the server
       const audioFilePath = `${
         FileSystem.documentDirectory
       }${new Date().getTime()}.mp3`;
-      await FileSystem.writeAsStringAsync(
-        audioFilePath,
-        pollyResponse.AudioStream.toString("base64"),
-        { encoding: FileSystem.EncodingType.Base64 }
-      );
+
+      await FileSystem.writeAsStringAsync(audioFilePath, base64Audio, {
+        encoding: FileSystem.EncodingType.Base64,
+      });
 
       return audioFilePath;
     } catch (error) {
-      console.error("Error synthesizing text with Polly:", error);
+      console.error("Error requesting text synthesis:", error);
       throw error;
     }
   };
@@ -57,4 +53,4 @@ const useSpeechSynthModel = () => {
   return { synthesizeText, playAudio };
 };
 
-export default useSpeechSynthModel;
+export default useSpeechSynth;

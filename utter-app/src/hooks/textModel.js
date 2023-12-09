@@ -12,6 +12,8 @@ const useTextModel = () => {
         }
       );
       console.log("This is GPT's response:", gptResponse.data.message);
+
+      return gptResponse.data.message;
     } catch (error) {
       console.error("Error with OpenAI:", error);
     }

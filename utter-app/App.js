@@ -16,6 +16,7 @@ import useTextModel from "./src/hooks/textModel";
 import useFileUpload from "./src/hooks/useFileUpload"; // Import the new hook
 import useAudioRecorder from "./src/hooks/useAudioRecorder"; // Import the new hook
 import io from "socket.io-client";
+import useSpeechSynthModel from "./src/hooks/useSpeechSynth";
 
 const socket = io("http://130.229.177.235:3000"); // Replace with your server URL and port (MAYBE ITS WS INSTEAD OF HTTP)
 
@@ -26,6 +27,7 @@ export default function App() {
   const { uploadAudioFile, uploadStatus, error } = useFileUpload();
   const [isLoading, setIsLoading] = useState(false);
   const [chatHistory, setChatHistory] = useState([]);
+  const { synthesizeText, playAudio } = useSpeechSynthModel();
 
   /*  ----------Handle socket IO for chat history updates----------- */
   useEffect(() => {
@@ -33,10 +35,6 @@ export default function App() {
       console.log("Connected to server via WebSocket");
       socket.emit("requestChatHistory");
     });
-
-    // socket.on("receiveChatHistory", (history) => {
-    //   setChatHistory(history);
-    // });
 
     socket.on("receiveChatHistory", (history) => {
       console.log("Received message history:");
@@ -64,6 +62,7 @@ export default function App() {
   const handleStartRecording = () => {
     startRecording();
   };
+
   const handleSendRecording = async () => {
     setIsLoading(true); // Start loading
     let uri;
@@ -77,7 +76,9 @@ export default function App() {
       try {
         const transcription = await uploadAudioFile(uri);
         console.log("Transcribed audio file:", transcription);
-        await submitMessage(transcription); // TODO: sort out message receival
+        const gptResponse = await submitMessage(transcription); // TODO: sort out message receival
+        const audioFilePath = await synthesizeText(gptResponse);
+        await playAudio(audioFilePath);
       } catch (error) {
         console.error("Error during file upload:", error);
         // Handle errors in UI, such as showing an error message
