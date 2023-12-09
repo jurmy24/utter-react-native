@@ -3,13 +3,13 @@
 import { Module } from '@nestjs/common';
 import { ChatModelService } from './chat-model.service';
 import { ChatModelController } from './chat-model.controller';
-import { MessageHistoryService } from '../message-history/message-history.service';
 import { HttpModule } from '@nestjs/axios'; // Import HttpModule
+import { MessageHistoryModule } from 'src/message-history/message-history.module';
 
 @Module({
   // ... other configurations
-  imports: [HttpModule],
-  providers: [ChatModelService, MessageHistoryService],
+  imports: [HttpModule, MessageHistoryModule],
+  providers: [ChatModelService],
   controllers: [ChatModelController],
 })
 export class ChatModelModule {}

@@ -6,10 +6,12 @@ import { AudioModule } from './audio/audio.module';
 // import { TextProcessingModule } from './text-processing/text-processing.module';
 import { TranscriptionModule } from './transcription/transcription.module';
 import { ChatModelModule } from './chat-model/chat-model.module';
+import { MessageHistoryModule } from './message-history/message-history.module';
+
 
 @Module({
-  imports: [AudioModule, TranscriptionModule, ChatModelModule], //SpeechSynthesisModule, TextProcessingModule, 
+  imports: [AudioModule, TranscriptionModule, ChatModelModule, MessageHistoryModule], //SpeechSynthesisModule, TextProcessingModule, 
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService], // MessageHistoryService?
 })
 export class AppModule {}

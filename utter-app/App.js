@@ -15,6 +15,9 @@ import { BallIndicator } from "react-native-indicators";
 import useTextModel from "./src/hooks/textModel";
 import useFileUpload from "./src/hooks/useFileUpload"; // Import the new hook
 import useAudioRecorder from "./src/hooks/useAudioRecorder"; // Import the new hook
+import io from "socket.io-client";
+
+const socket = io("http://130.229.177.235:3000"); // Replace with your server URL and port (MAYBE ITS WS INSTEAD OF HTTP)
 
 export default function App() {
   const [inputText, setInputText] = useState("");
@@ -22,6 +25,31 @@ export default function App() {
   const { submitMessage } = useTextModel();
   const { uploadAudioFile, uploadStatus, error } = useFileUpload();
   const [isLoading, setIsLoading] = useState(false);
+  const [chatHistory, setChatHistory] = useState([]);
+
+  /*  ----------Handle socket IO for chat history updates----------- */
+  useEffect(() => {
+    socket.on("connect", () => {
+      console.log("Connected to server via WebSocket");
+      socket.emit("requestChatHistory");
+    });
+
+    // socket.on("receiveChatHistory", (history) => {
+    //   setChatHistory(history);
+    // });
+
+    socket.on("receiveChatHistory", (history) => {
+      console.log("Received message history:");
+      // Update your state or UI with the received history
+      setChatHistory(history);
+    });
+
+    // Cleanup function to remove event listeners
+    return () => {
+      socket.off("connect");
+      socket.off("receiveChatHistory");
+    };
+  }, []);
 
   /*  ----------Handle textual submission----------- */
   const handleSendText = async () => {
@@ -62,14 +90,14 @@ export default function App() {
   };
 
   /*  ---------------Scroll to the bottom every time messages change----------- */
-  // const scrollViewRef = useRef(); // Create a ref for the ScrollView
-  // useEffect(() => {
-  //   if (scrollViewRef.current) {
-  //     setTimeout(() => {
-  //       scrollViewRef.current.scrollToEnd({ animated: true });
-  //     }, 100); // Adjust the timeout as needed
-  //   }
-  // }, [messages]);
+  const scrollViewRef = useRef(); // Create a ref for the ScrollView
+  useEffect(() => {
+    if (scrollViewRef.current) {
+      setTimeout(() => {
+        scrollViewRef.current.scrollToEnd({ animated: true });
+      }, 100); // Adjust the timeout as needed
+    }
+  }, [chatHistory]);
 
   /*  ----------View----------- */
   return (
@@ -78,18 +106,17 @@ export default function App() {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
       >
-        <ScrollView style={styles.messagesContainer}>
-          {/*ref={scrollViewRef}*/}
-          {/* {messages.map((msg, index) => (
+        <ScrollView style={styles.messagesContainer} ref={scrollViewRef}>
+          {chatHistory.map((msg, index) => (
             <View
               key={index}
               style={
-                msg.sender === "user" ? styles.userMessage : styles.aiMessage
+                msg.role === "user" ? styles.userMessage : styles.aiMessage
               }
             >
-              <Text>{msg.text}</Text>
+              <Text>{msg.content}</Text>
             </View>
-          ))} */}
+          ))}
         </ScrollView>
         <View style={styles.inputContainer}>
           <TouchableOpacity
