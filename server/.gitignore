@@ -38,4 +38,4 @@ lerna-debug.log*
 .env
 
 # Audio files
-/audio
+/uploads/audio
