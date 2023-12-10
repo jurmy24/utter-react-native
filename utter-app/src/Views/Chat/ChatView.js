@@ -18,7 +18,7 @@ import useAudioRecorder from "../../hooks/useAudioRecorder"; // Import the new h
 import io from "socket.io-client";
 import useSpeechSynthModel from "../../hooks/useSpeechSynth";
 
-const socket = io("http://130.229.177.235:3000"); // Replace with your server URL and port (MAYBE ITS WS INSTEAD OF HTTP)
+const socket = io("http://130.229.177.235:3000");
 
 const ChatView = () => {
   const [inputText, setInputText] = useState("");

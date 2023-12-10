@@ -8,6 +8,6 @@ import { HttpModule } from '@nestjs/axios';
 @Module({
   imports: [HttpModule],
   providers: [TranscriptionService],
-  controllers: [TranscriptionController], // Add the controller here
+  controllers: [TranscriptionController],
 })
 export class TranscriptionModule {}

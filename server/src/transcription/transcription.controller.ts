@@ -18,17 +18,20 @@ export class TranscriptionController {
   @Post('upload')
   @UseInterceptors(FileInterceptor('file'))
   async uploadAndTranscribe(@UploadedFile() file: Express.Multer.File, @Res() response: Response) {
+    // Check if an audio file was sent properly
     if (!file) {
       return response.status(400).json({ message: 'No audio file provided' });
     }
 
     try {
-      console.log("This is the file: ", file)
-      // Transcribe the audio file
+      // Transcribe the audio file using the transcription service
       const transcription = await this.transcriptionService.transcribeAudio(file);
-      console.log("Here's transcription: ", transcription);
+      console.log("AI: ", transcription);
+
       return response.status(200).json({ transcription });
+      
     } catch (error) {
+      // Handle any errors that may have occurred
       if (error.response) {
         console.error('Error Data:', error.response.data);
         console.error('Error Status:', error.response.status);

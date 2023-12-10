@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { HttpService } from '@nestjs/axios';
-import { Observable } from 'rxjs';
 import { AxiosResponse } from 'axios';
 import * as FormData from 'form-data';
 import * as fs from 'fs';
@@ -11,19 +10,18 @@ const ffmpeg = require('fluent-ffmpeg');
 @Injectable()
 export class TranscriptionService {
   private readonly openAiApiUrl = 'https://api.openai.com/v1/audio/transcriptions';
-  private readonly openAiApiKey = process.env.OPENAI_API_KEY; // Set this in your environment
+  private readonly openAiApiKey = process.env.OPENAI_API_KEY; // API key for OpenAI
 
   constructor(private httpService: HttpService) {}
-  
-  /**
-   * Transcribes the given audio file using OpenAI's Audio API.
-   * 
-   * @param file The audio file to transcribe.
-   * @returns An Observable of the AxiosResponse.
-   */
 
+  /**
+   * Saves the received audio file to disk.
+   * 
+   * @param file The audio file received in the request.
+   * @returns The file path where the audio file is saved.
+   */
   async saveFile(file: Express.Multer.File): Promise<string> {
-    const uploadDir = 'uploads';
+    const uploadDir = 'uploads/audio'; // TODO: Perhaps put the audio file in a clientID directory?
     const filePath = path.join(uploadDir, file.originalname);
 
     // Ensure the upload directory exists
@@ -36,7 +34,14 @@ export class TranscriptionService {
     return filePath;
   }
 
-  async convertAudio(inputPath, outputPath): Promise<void> {
+  /**
+   * Converts an audio file to MP3 format.
+   * 
+   * @param inputPath Path to the input file.
+   * @param outputPath Path for the output MP3 file.
+   * @returns A promise that resolves when conversion is complete.
+   */
+  async convert(inputPath, outputPath): Promise<void> {
     return new Promise((resolve, reject) => {
       ffmpeg(inputPath)
         .toFormat('mp3')
@@ -46,39 +51,54 @@ export class TranscriptionService {
     });
   }
 
-  async convertAndTranscribe(file: Express.Multer.File): Promise<string> {
+  /**
+   * Handles the conversion of an audio file to a format accepted by whisper.
+   * 
+   * @param file The audio file to be processed.
+   * @returns The path to the converted MP3 file.
+   */
+  async convertAudioFile(file: Express.Multer.File): Promise<string> {
     try {
-      // TODO: CHECK IF THE FILE FORMAT IS NOT ONE OF THOSE ACCEPTED BY OPENAI TO SAVE TIME
       const savedFilePath = await this.saveFile(file);
-      const outputFilePath = savedFilePath.replace(path.extname(savedFilePath), '.mp3');
-
-      await this.convertAudio(savedFilePath, outputFilePath);
-      return outputFilePath;
+      const fileExtension = path.extname(savedFilePath).toLowerCase();
+      const acceptedFormats = ['.mp3', '.mp4', '.mpeg', '.mpga', '.m4a', '.wav', '.webm'];
+  
+      // Check if the file format is already accepted
+      if (acceptedFormats.includes(fileExtension)) {
+        return savedFilePath;
+      } else {
+        // Convert to MP3 if the format is not accepted
+        const outputFilePath = savedFilePath.replace(fileExtension, '.mp3');
+        await this.convert(savedFilePath, outputFilePath);
+        return outputFilePath;
+      }
     } catch (error) {
-      console.error('Error in convertAndTranscribe:', error);
+      console.error('Error in convertAudioFile:', error);
       throw error;
     }
   }
+  
 
+  /**
+   * Transcribes an audio file using OpenAI's Audio API.
+   * 
+   * @param file The audio file to transcribe.
+   * @returns The text transcription of the audio file.
+   */
   async transcribeAudio(file: Express.Multer.File): Promise<string>  {
-      // Convert the file to MP3
-    const mp3FilePath = await this.convertAndTranscribe(file);
-
-    // Now create FormData with the converted file
-    const formData = new FormData();
-    formData.append('file', fs.createReadStream(mp3FilePath));
-    formData.append('model', 'whisper-1');
-
-
-    const headers = {
-      ...formData.getHeaders(),
-      'Authorization': `Bearer ${this.openAiApiKey}`
-    };
-
-    // // Transcribe the converted file
-    // return firstValueFrom(this.httpService.post(this.openAiApiUrl, formData, { headers }));
-
     try {
+      const filePath = await this.convertAudioFile(file);
+
+      // Prepare FormData with the converted file
+      const formData = new FormData();
+      formData.append('file', fs.createReadStream(filePath));
+      formData.append('model', 'whisper-1');
+
+      const headers = {
+        ...formData.getHeaders(),
+        'Authorization': `Bearer ${this.openAiApiKey}`
+      };
+
       // Transcribe the converted file
       const response: AxiosResponse = await firstValueFrom(
         this.httpService.post(this.openAiApiUrl, formData, { headers })
@@ -86,7 +106,7 @@ export class TranscriptionService {
 
       // Extract the text transcription from the response
       const transcriptionText = response.data.text;
-      return transcriptionText; // This is the string format of the transcription
+      return transcriptionText; // Return the string format of the transcription
     } catch (error) {
       console.error('Error during transcription:', error);
       throw new Error('Error transcribing audio');
