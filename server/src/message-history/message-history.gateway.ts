@@ -4,7 +4,7 @@ import { MessageHistoryService } from './message-history.service';
 
 @WebSocketGateway({
   cors: {
-    origin: '*', // Adjust according to your security requirements
+    origin: '*', // Allow connections from any origin
   },
 })
 export class MessageHistoryGateway {
@@ -13,19 +13,22 @@ export class MessageHistoryGateway {
 
   constructor(private readonly messageHistoryService: MessageHistoryService) {}
 
+  // Called after the module initialization
   onModuleInit() {
-    
     // Listen to the historyUpdated event from the MessageHistoryService
     this.messageHistoryService.on('historyUpdated', (history) => {
-      // Emit the updated history to all connected client
-      this.server.emit('receiveChatHistory', history);
+      // Filter out the system prompt before emitting to clients
+      const filteredHistory = history.filter(msg => msg.role !== 'system');
+      // Emit the updated history to all connected clients
+      this.server.emit('receiveChatHistory', filteredHistory);
     });
   }
 
   // Handle new WebSocket connections
   handleConnection(client: Socket) {
-    // Emit the current message history to the newly connected client
-    const history = this.messageHistoryService.getHistory();
+    console.log(`Client connected: ${client.id}`);
+    // Emit the current message history to the newly connected client, excluding the system prompt
+    const history = this.messageHistoryService.getHistory().filter(msg => msg.role !== 'system');
     client.emit('receiveChatHistory', history);
   }
 
@@ -37,8 +40,8 @@ export class MessageHistoryGateway {
   // Listen for client requests for the latest message history
   @SubscribeMessage('requestChatHistory')
   handleMessageHistoryRequest(@ConnectedSocket() client: Socket, @MessageBody() data: any): void {
-    // Emit the latest message history to the requesting client
-    const history = this.messageHistoryService.getHistory();
+    // Emit the latest message history to the requesting client, excluding the system prompt
+    const history = this.messageHistoryService.getHistory().filter(msg => msg.role !== 'system');
     client.emit('receiveChatHistory', history);
   }
 }

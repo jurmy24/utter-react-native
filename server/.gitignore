@@ -37,5 +37,9 @@ lerna-debug.log*
 # Environment variables
 .env
 
-# Audio files
-/uploads/audio
+# Ignore audio files
+*.mp3
+*.wav
+*.m4a
+*.3gp
+*.caf
