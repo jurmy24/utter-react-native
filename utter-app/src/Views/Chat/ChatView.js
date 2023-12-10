@@ -18,7 +18,7 @@ import useAudioRecorder from "../../hooks/useAudioRecorder"; // Import the new h
 import io from "socket.io-client";
 import useSpeechSynthModel from "../../hooks/useSpeechSynth";
 import uniqueId from "../../uuid_file";
-import { useRoute } from "@react-navigation/native";
+import { useRoute, useNavigation } from "@react-navigation/native";
 
 // const socket = io("http://192.168.10.152:3000", {
 //   query: { uniqueId, chatbotId },
@@ -37,6 +37,8 @@ const ChatView = () => {
   const route = useRoute();
   const chatbotId = route.params?.chatbotId; // This will be either "english" or "french"
 
+  const navigation = useNavigation();
+
   // TODO: set a local chatId in the parameters of this to distinguish between the different chats a user can have
   const [inputText, setInputText] = useState("");
   const { isRecording, startRecording, stopRecording } = useAudioRecorder();
@@ -45,6 +47,7 @@ const ChatView = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [chatHistory, setChatHistory] = useState([]);
   const { synthesizeText, playAudio } = useSpeechSynthModel(chatbotId);
+  const deviceId = uniqueId;
 
   /*  ----------Handle socket IO for chat history updates----------- */
   const socket = useRef(null);
@@ -56,7 +59,7 @@ const ChatView = () => {
     socket.current.on("connect", () => {
       console.log("Connected to server via WebSocket");
       // Request the chat history for the specific device and chatbot
-      socket.current.emit("requestChatHistory", { uniqueId, chatbotId });
+      socket.current.emit("requestChatHistory", { deviceId, chatbotId });
     });
 
     // Handle receiving chat history
@@ -131,6 +134,12 @@ const ChatView = () => {
         behavior={Platform.OS === "ios" ? "padding" : "height"}
         style={{ flex: 1 }}
       >
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={styles.backButton}
+        >
+          <Icon name="arrow-left" size={20} color="black" />
+        </TouchableOpacity>
         <ScrollView style={styles.messagesContainer} ref={scrollViewRef}>
           {chatHistory.map((msg, index) => (
             <View

@@ -35,7 +35,7 @@ export class MessageHistoryGateway {
       // Filter out the system prompt before emitting to clients
       const filteredHistory = history.filter(msg => msg.role !== 'system');
 
-      // logRoomsAndClients(this.server)
+      logRoomsAndClients(this.server)
 
       // Emit the updated history to all connected clients
       this.server.to(`${deviceId}-${chatbotId}`).emit('serverHistoryPush', filteredHistory);
@@ -50,6 +50,7 @@ export class MessageHistoryGateway {
     // Create a room identified by the device and chatbot ID
     const deviceId = client.handshake.query.deviceId;
     const chatbotId = client.handshake.query.chatbotId;
+    client.join(`${deviceId}-${chatbotId}`);
 
     // Assume deviceId and chatbotId are coming from client.handshake.query
 
@@ -58,6 +59,7 @@ export class MessageHistoryGateway {
 
     // Emit the current message history to the newly connected client, excluding the system prompt
     const history = this.messageHistoryService.getHistory(deviceIdValue, chatbotIdValue).filter(msg => msg.role !== 'system');
+    console.log("Message history upon connection:", history);
     this.server.to(`${deviceId}-${chatbotId}`).emit('serverHistoryPush', history);
   }
 
@@ -72,8 +74,10 @@ export class MessageHistoryGateway {
   handleMessageHistoryRequest(@ConnectedSocket() client: Socket, @MessageBody() data: any): void {
     // Retrieve deviceId and chatbotId from data or client object
     const { deviceId, chatbotId } = data; // Or get these from the client object
+    console.log(deviceId, chatbotId)
     // Emit the latest message history to the requesting client, excluding the system prompt
     const history = this.messageHistoryService.getHistory(deviceId, chatbotId).filter(msg => msg.role !== 'system');
+    console.log("History round two", history);
     client.emit('serverHistoryPush', history);
   }
 }
