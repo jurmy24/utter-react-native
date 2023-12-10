@@ -2,15 +2,17 @@ import React from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
 import Avatar from "../Components/./Avatars";
 
-const LanguagePartnerRow = ({ chatbotId }) => {
+const LanguagePartnerRow = ({ chatbotId, lastMessage }) => {
+  const placeholderMessage =
+    chatbotId === "french-chatbot"
+      ? "Pas de messages pour l'instant"
+      : "No messages yet";
   return (
     <View style={styles.row}>
       <Avatar />
       <View style={styles.textContainer}>
         <Text style={styles.name}>{chatbotId}</Text>
-        <Text style={styles.details}>
-          Plans on the weekend, taking a walk, coffee, ordering...
-        </Text>
+        <Text style={styles.details}>{lastMessage || placeholderMessage}</Text>
       </View>
     </View>
   );
