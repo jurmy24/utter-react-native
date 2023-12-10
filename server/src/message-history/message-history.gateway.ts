@@ -16,32 +16,47 @@ export class MessageHistoryGateway {
   // Called after the module initialization
   onModuleInit() {
     // Listen to the historyUpdated event from the MessageHistoryService
-    this.messageHistoryService.on('historyUpdated', (history) => {
+    this.messageHistoryService.on('historyUpdated', ({ deviceId, chatbotId, history }) => {
       // Filter out the system prompt before emitting to clients
       const filteredHistory = history.filter(msg => msg.role !== 'system');
       // Emit the updated history to all connected clients
-      this.server.emit('receiveChatHistory', filteredHistory);
+      this.server.to(`${deviceId}-${chatbotId}`).emit('receiveChatHistory', filteredHistory);
     });
   }
 
   // Handle new WebSocket connections
   handleConnection(client: Socket) {
     console.log(`Client connected: ${client.id}`);
+    // Here you need to determine the deviceId and chatbotId from the client
+    // For this example, assume they are part of the client's query parameters
+    // Create a room identified by the device and chatbot ID
+    const deviceId = client.handshake.query.deviceId;
+    const chatbotId = client.handshake.query.chatbotId;
+    client.join(`${deviceId}-${chatbotId}`);
+
+    // Assume deviceId and chatbotId are coming from client.handshake.query
+
+    const deviceIdValue = Array.isArray(deviceId) ? deviceId[0] : deviceId;
+    const chatbotIdValue = Array.isArray(chatbotId) ? chatbotId[0] : chatbotId;
+
     // Emit the current message history to the newly connected client, excluding the system prompt
-    const history = this.messageHistoryService.getHistory().filter(msg => msg.role !== 'system');
+    const history = this.messageHistoryService.getHistory(deviceIdValue, chatbotIdValue).filter(msg => msg.role !== 'system');
     client.emit('receiveChatHistory', history);
   }
 
   // Handle disconnections
   handleDisconnect(client: Socket) {
     console.log(`Client disconnected: ${client.id}`);
+    // Destroy the rooms
   }
 
   // Listen for client requests for the latest message history
   @SubscribeMessage('requestChatHistory')
   handleMessageHistoryRequest(@ConnectedSocket() client: Socket, @MessageBody() data: any): void {
+    // Retrieve deviceId and chatbotId from data or client object
+    const { deviceId, chatbotId } = data; // Or get these from the client object
     // Emit the latest message history to the requesting client, excluding the system prompt
-    const history = this.messageHistoryService.getHistory().filter(msg => msg.role !== 'system');
+    const history = this.messageHistoryService.getHistory(deviceId, chatbotId).filter(msg => msg.role !== 'system');
     client.emit('receiveChatHistory', history);
   }
 }

@@ -7,35 +7,47 @@ import { EventEmitter } from 'events';
 
 @Injectable()
 export class MessageHistoryService extends EventEmitter {
-  private historyFilePath = path.join(__dirname, 'messageHistory.json');
+  private historiesFilePath = path.join(__dirname, 'histories.json');
+
+  // Define default prompts for different chatbots
+  private defaultPrompts = {
+    'english-chatbot': {
+      role: "system",
+      content: "I am a university student called Tim and I'm interested in sports. I live in California and I enjoy hikes, playing football, and hanging out with friends. I can make up the rest of my background. I'm friendly, interested in talking about yourself, and learning about the user. I correct mistakes constructively and speak naturally."
+    },
+    'french-chatbot': {
+      role: "system",
+      content: "Je suis Claire, ta partenaire linguistique française. En plus de partager ma passion pour la culture française, je suis aussi ici pour t'aider à améliorer ton français. J'habite à Nice et j'aime discuter de tout, de la cuisine à la politique. Mon approche reste informelle et amicale, utilisant un langage détendu et le tutoiement pour créer une ambiance conviviale. Je corrigerai tes fautes de français de manière constructive et encourageante, tout en adaptant mon aide à ton niveau de langue. Je partagerai des expressions authentiques et des anecdotes culturelles, et si j'ai besoin de clarifications, je poserai des questions de manière décontractée."
+    }
+  };
 
   constructor() {
     super();
-    // Check if the history file exists, if not, create it
-    if (!fs.existsSync(this.historyFilePath)) {
-      // Define the default system prompt
-      const defaultPrompt = [{
-        role: "system",
-        content: "You are a university student called Tim Johnson that is interested in sports. You live and study in California and spend your free time going on hikes, playing football, and hanging out with friends. You can make up the rest of your background, but be consistent.\n\nYou're friendly and are interested in both talking about yourself but also learning about the user you speak to. Since the users you speak to are working on improving their English skills, you correct some of their mistakes in a constructive way if you feel it is necessary. You should also speak like a human being does and by no means act like a chatbot. You're a friend."
-      }];
-      // Create the history file with the default prompt
-      fs.writeFileSync(this.historyFilePath, JSON.stringify(defaultPrompt));
+    if (!fs.existsSync(this.historiesFilePath)) {
+      fs.writeFileSync(this.historiesFilePath, JSON.stringify({}));
     }
   }
 
-  getHistory(): any[] {
-    // Read the history file and return its contents
-    const data = fs.readFileSync(this.historyFilePath, 'utf-8');
-    return JSON.parse(data);
+  getHistory(deviceId: string, chatbotId: string): any[] {
+    const histories = JSON.parse(fs.readFileSync(this.historiesFilePath, 'utf-8'));
+    const historyKey = `${deviceId}-${chatbotId}`;
+
+    // Inject default system prompt if the history for this device-chatbot pair doesn't exist
+    if (!histories[historyKey]) {
+      histories[historyKey] = [this.defaultPrompts[chatbotId] || this.defaultPrompts['english-chatbot']];
+      fs.writeFileSync(this.historiesFilePath, JSON.stringify(histories));
+    }
+
+    return histories[historyKey];
   }
 
-  appendToHistory(message: any): void {
-    // Retrieve the current history, append the new message, and save it
-    const history = this.getHistory();
-    history.push(message);
-    fs.writeFileSync(this.historyFilePath, JSON.stringify(history));
+  appendToHistory(deviceId: string, chatbotId: string, message: any): void {
+    const histories = JSON.parse(fs.readFileSync(this.historiesFilePath, 'utf-8'));
+    const historyKey = `${deviceId}-${chatbotId}`;
+    histories[historyKey] = histories[historyKey] || [];
+    histories[historyKey].push(message);
     
-    // Emit an event when the history is updated
-    this.emit('historyUpdated', history);
+    fs.writeFileSync(this.historiesFilePath, JSON.stringify(histories));
+    this.emit('historyUpdated', { deviceId, chatbotId, history: histories[historyKey] });
   }
 }

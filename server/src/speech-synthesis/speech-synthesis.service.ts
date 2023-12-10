@@ -7,6 +7,8 @@ import { AxiosResponse } from 'axios';
 @Injectable()
 export class SpeechSynthesisService {
   private polly: AWS.Polly;
+  private readonly frenchChatId = 'english-chatbot';
+  private readonly englishChatId = 'french-chatbot';
 
   constructor(private readonly httpService: HttpService) {
     AWS.config.update({
@@ -18,20 +20,22 @@ export class SpeechSynthesisService {
     this.polly = new AWS.Polly();
   }
 
-  async synthesizeSpeech(text: string, useOpenAI: boolean = false): Promise<Buffer> {
-    if (useOpenAI) {
-      return this.synthesizeWithOpenAI(text);
+  async synthesizeSpeech(text: string, chatId: string): Promise<Buffer> {
+    if (chatId === this.frenchChatId) {
+      return this.synthesizeWithPolly(text, 'Isabelle'); // Use 'Isabelle' voice for French
+    } else if (chatId === this.englishChatId) {
+      return this.synthesizeWithOpenAI(text, 'onyx'); // Use 'onyx' voice for English
     } else {
-      return this.synthesizeWithPolly(text);
+      throw new Error('Invalid chatId');
     }
   }
 
-  private async synthesizeWithPolly(text: string): Promise<Buffer> {
+  private async synthesizeWithPolly(text: string, voiceId: string): Promise<Buffer> {
     const params: AWS.Polly.SynthesizeSpeechInput = {
       Text: text,
       OutputFormat: 'mp3',
       Engine: 'neural',
-      VoiceId: 'Matthew',
+      VoiceId: voiceId,
     };
 
     try {
@@ -43,11 +47,11 @@ export class SpeechSynthesisService {
     }
   }
 
-  private async synthesizeWithOpenAI(text: string): Promise<Buffer> {
+  private async synthesizeWithOpenAI(text: string, voice: string): Promise<Buffer> {
     const requestBody = {
       model: 'tts-1-hd',
       input: text,
-      voice: 'onyx',
+      voice: voice,
     };
 
     try {
@@ -60,7 +64,6 @@ export class SpeechSynthesisService {
           responseType: 'arraybuffer',
         })
       );
-      // return response.data.AudioStream as Buffer;
       return Buffer.from(response.data);
     } catch (error) {
       console.error('Error in synthesizeWithOpenAI:', error);

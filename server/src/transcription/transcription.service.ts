@@ -83,30 +83,33 @@ export class TranscriptionService {
    * Transcribes an audio file using OpenAI's Audio API.
    * 
    * @param file The audio file to transcribe.
+   * @param chatId The ID of the chatbot (to determine the language and prompt).
    * @returns The text transcription of the audio file.
    */
-  async transcribeAudio(file: Express.Multer.File): Promise<string>  {
+  async transcribeAudio(file: Express.Multer.File, chatId: string): Promise<string>  {
     try {
       const filePath = await this.convertAudioFile(file);
 
-      // Prepare FormData with the converted file
       const formData = new FormData();
       formData.append('file', fs.createReadStream(filePath));
       formData.append('model', 'whisper-1');
-      // Add a prompt to ensure the model includes filler words (this might help assuming language spoken)
-      formData.append('prompt', "Umm, let me think like, hmm... Okay, here's what I'm, like, thinking.")
-      
+
+      // Append a specific prompt based on the chatId
+      let prompt = "Umm, let me think like, hmm... Okay, here's what I'm, like, thinking.";
+      if (chatId === 'french-chatbot') {
+        prompt = "Euh, laissez-moi réfléchir, hmm... D'accord, voici ce que je pense.";
+      }
+      formData.append('prompt', prompt);
+
       const headers = {
         ...formData.getHeaders(),
         'Authorization': `Bearer ${this.openAiApiKey}`
       };
 
-      // Transcribe the converted file
       const response: AxiosResponse = await firstValueFrom(
         this.httpService.post(this.openAiApiUrl, formData, { headers })
       );
 
-      // Extract the text transcription from the response
       const transcriptionText = response.data.text;
       return transcriptionText; // Return the string format of the transcription
     } catch (error) {

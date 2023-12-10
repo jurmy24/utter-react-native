@@ -17,24 +17,25 @@ export class ChatModelController {
   @Post('submit')
   async submitMessage(@Body() body: any, @Res() response: Response) {
     try {
-      // Format the new user message to add to the history
-      // The message content is received from the request body
+      
+      // Extract deviceId and chatbotId from the request body
+      const { deviceId, chatbotId, message } = body;
+
+      // Format the new user message
       const userMessage = {
         role: "user",
-        content: body.message // The message text sent by the user
+        content: message
       };
+
       // Log the User message for debugging
       console.log("User:", userMessage.content)
 
       // Append the user's message to the conversation history
-      this.messageHistoryService.appendToHistory(userMessage);
+      this.messageHistoryService.appendToHistory(deviceId, chatbotId, userMessage);
 
-      // Retrieve the updated conversation history
-      // and reformat it for use with the chat model
-      const history = this.messageHistoryService.getHistory().map(msg => ({
-        role: msg.role, // Message sender role ('user' or 'assistant')
-        content: msg.content // Message text
-      }));
+      // Retrieve and reformat the conversation history for the chat model
+      const history = this.messageHistoryService.getHistory(deviceId, chatbotId)
+        .map(msg => ({ role: msg.role, content: msg.content }));
 
       // Get the AI chat model's response based on the entire conversation history
       const chatResponse = await this.chatModelService.getChatResponse(history);
@@ -49,7 +50,7 @@ export class ChatModelController {
       console.log("Assistant: ", assistantMessage.content);
 
       // Add the assistant's response to history
-      this.messageHistoryService.appendToHistory(assistantMessage);
+      this.messageHistoryService.appendToHistory(deviceId, chatbotId, assistantMessage);
 
       // Send the chat model's response back to the client
       return response.status(200).json({ message: chatResponse });

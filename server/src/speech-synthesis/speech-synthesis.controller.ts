@@ -7,9 +7,12 @@ export class SpeechSynthesisController {
   constructor(private readonly speechSynthesisService: SpeechSynthesisService) {}
 
   @Post('synthesize')
-  async synthesize(@Body('text') text: string, @Res() res: Response) {
-    try {
-      const audioStream = await this.speechSynthesisService.synthesizeSpeech(text, true); // currently using openAI
+  async synthesize(@Body() body: any, @Res() res: Response) {
+    try { 
+      // Extract deviceId and chatbotId from the request body
+      const { chatbotId, message } = body;
+
+      const audioStream = await this.speechSynthesisService.synthesizeSpeech(message, chatbotId); // currently using openAI
       res.set({
         'Content-Type': 'audio/mpeg',
         'Content-Length': audioStream.length,
