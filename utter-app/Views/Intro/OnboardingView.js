@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, ImageBackground, SafeAreaView } from 'react-native';
 import Logo from '../../assets/images/Logo_utter.svg';
 import { introStyles } from '../../assets/stylesheets/intro_styles';
-import ArrowButton  from './../Components/ArrowButton'
+import ArrowButton  from './../Components/Buttons'
 import { generalStyles } from '../../assets/stylesheets/general_styles';
 
 
@@ -14,11 +14,11 @@ const OnboardingView = ({ navigation }) => {
       style={generalStyles.background_style}
     >
       <SafeAreaView style={generalStyles.safeArea}>
-        <View style={introStyles.container}>
+        <View style={introStyles.logoContainer}>
           <Logo style={introStyles.logo}/>
-          <View style={introStyles.padding}></View>
-            <View style={introStyles.content}>
-              <View style={introStyles.textContainer}>
+          <View style={introStyles.onboardingViewPadding}></View>
+            <View style={introStyles.onboardingViewContent}>
+              <View style={introStyles.titleContainer}>
                 <Text style={introStyles.title}>
                   Get your artificial language partner to practice speaking.
                 </Text>
