@@ -26,6 +26,7 @@ const socket = io("http://130.229.177.235:3000", {
 });
 
 const ChatView = () => {
+  // TODO: set a local chatId in the parameters of this to distinguish between the different chats a user can have
   const [inputText, setInputText] = useState("");
   const { isRecording, startRecording, stopRecording } = useAudioRecorder();
   const { submitMessage } = useTextModel();
@@ -40,7 +41,7 @@ const ChatView = () => {
     socket.on("connect", () => {
       console.log("Connected to server via WebSocket");
       // Request the chat history for the specific device and chatbot
-      socket.emit("requestChatHistory", { deviceId, chatbotId });
+      socket.emit("requestChatHistory", { uniqueId, chatbotId });
     });
 
     // Handle receiving chat history
