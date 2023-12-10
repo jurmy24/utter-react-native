@@ -44,9 +44,16 @@ export class MessageHistoryService extends EventEmitter {
   appendToHistory(deviceId: string, chatbotId: string, message: any): void {
     const histories = JSON.parse(fs.readFileSync(this.historiesFilePath, 'utf-8'));
     const historyKey = `${deviceId}-${chatbotId}`;
+
+    // Inject default system prompt if the history for this device-chatbot pair doesn't exist
+    if (!histories[historyKey]) {
+      histories[historyKey] = [this.defaultPrompts[chatbotId] || this.defaultPrompts['english-chatbot']];
+      fs.writeFileSync(this.historiesFilePath, JSON.stringify(histories));
+    }
+
     histories[historyKey] = histories[historyKey] || [];
     histories[historyKey].push(message);
-    
+
     fs.writeFileSync(this.historiesFilePath, JSON.stringify(histories));
     this.emit('historyUpdated', { deviceId, chatbotId, history: histories[historyKey] });
   }

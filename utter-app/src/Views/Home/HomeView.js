@@ -28,8 +28,26 @@ const HomeView = () => {
         <ScrollView style={generalStyles.languagePartnerListContainer}>
           <View style={generalStyles.languagePartnersList}>
             {/* This TouchableOpacity should navigate to the ChatView when pressed */}
-            <TouchableOpacity onPress={() => navigation.navigate("Chat")}>
-              <LanguagePartnerRow style={{ paddingHorizontal: 15 }} />
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("Chat", { chatbotId: "english-chatbot" })
+              }
+            >
+              <LanguagePartnerRow
+                chatbotId="english-chatbot"
+                style={{ paddingHorizontal: 15 }}
+              />
+            </TouchableOpacity>
+
+            <TouchableOpacity
+              onPress={() =>
+                navigation.navigate("Chat", { chatbotId: "french-chatbot" })
+              }
+            >
+              <LanguagePartnerRow
+                chatbotId="french-chatbot"
+                style={{ paddingHorizontal: 15 }}
+              />
             </TouchableOpacity>
 
             <View style={generalStyles.divider} />

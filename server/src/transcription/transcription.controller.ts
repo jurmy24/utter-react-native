@@ -19,7 +19,7 @@ export class TranscriptionController {
   async uploadAndTranscribe(
     @UploadedFile() file: Express.Multer.File, 
     @Body('deviceId') deviceId: string, // Added to receive deviceId from the request body
-    @Body('chatId') chatId: string,      // Added to receive chatId from the request body
+    @Body('chatbotId') chatbotId: string,      // Added to receive chatId from the request body
     @Res() response: Response
   ) {
     // TODO: Replace the @Body stuff above with the generic 'any' Body used in other controllers.
@@ -31,7 +31,7 @@ export class TranscriptionController {
     try {
       // Transcribe the audio file using the transcription service
       // Pass the chatId to the service to handle language-specific transcription
-      const transcription = await this.transcriptionService.transcribeAudio(file, chatId);
+      const transcription = await this.transcriptionService.transcribeAudio(file, chatbotId);
 
       return response.status(200).json({ transcription });
 

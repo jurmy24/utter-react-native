@@ -18,45 +18,60 @@ import useAudioRecorder from "../../hooks/useAudioRecorder"; // Import the new h
 import io from "socket.io-client";
 import useSpeechSynthModel from "../../hooks/useSpeechSynth";
 import uniqueId from "../../uuid_file";
+import { useRoute } from "@react-navigation/native";
 
-// const socket = io("http://130.229.177.235:3000");
+// const socket = io("http://192.168.10.152:3000", {
+//   query: { uniqueId, chatbotId },
+// });
 
-const socket = io("http://130.229.177.235:3000", {
-  query: { uniqueId, chatbotId },
-});
+const initializeSocket = (chatbotId) => {
+  console.log(uniqueId, chatbotId);
+  const deviceId = uniqueId;
+  return io("http://192.168.10.152:3000", {
+    query: { deviceId, chatbotId },
+  });
+};
 
 const ChatView = () => {
+  // Check which chatview we are entering
+  const route = useRoute();
+  const chatbotId = route.params?.chatbotId; // This will be either "english" or "french"
+
   // TODO: set a local chatId in the parameters of this to distinguish between the different chats a user can have
   const [inputText, setInputText] = useState("");
   const { isRecording, startRecording, stopRecording } = useAudioRecorder();
-  const { submitMessage } = useTextModel();
-  const { uploadAudioFile, uploadStatus, error } = useFileUpload();
+  const { submitMessage } = useTextModel(chatbotId);
+  const { uploadAudioFile, uploadStatus, error } = useFileUpload(chatbotId);
   const [isLoading, setIsLoading] = useState(false);
   const [chatHistory, setChatHistory] = useState([]);
-  const { synthesizeText, playAudio } = useSpeechSynthModel();
+  const { synthesizeText, playAudio } = useSpeechSynthModel(chatbotId);
 
   /*  ----------Handle socket IO for chat history updates----------- */
+  const socket = useRef(null);
   useEffect(() => {
+    // Initialize the socket connection with the current chatbotId
+    socket.current = initializeSocket(chatbotId);
+
     // Handle connection
-    socket.on("connect", () => {
+    socket.current.on("connect", () => {
       console.log("Connected to server via WebSocket");
       // Request the chat history for the specific device and chatbot
-      socket.emit("requestChatHistory", { uniqueId, chatbotId });
+      socket.current.emit("requestChatHistory", { uniqueId, chatbotId });
     });
 
     // Handle receiving chat history
-    socket.on("receiveChatHistory", (history) => {
+    socket.current.on("serverHistoryPush", (history) => {
       console.log("Received message history:", history);
       setChatHistory(history);
     });
 
     // Cleanup function to remove event listeners
     return () => {
-      socket.off("connect");
-      socket.off("receiveChatHistory");
-      socket.disconnect();
+      socket.current.off("connect");
+      socket.current.off("serverHistoryPush");
+      socket.current.disconnect();
     };
-  }, []);
+  }, [chatbotId]);
 
   /*  ----------Handle textual submission----------- */
   const handleSendText = async () => {

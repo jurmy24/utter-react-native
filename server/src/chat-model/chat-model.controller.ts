@@ -16,10 +16,10 @@ export class ChatModelController {
   // Define the POST method for the 'submit' route
   @Post('submit')
   async submitMessage(@Body() body: any, @Res() response: Response) {
-    try {
-      
+    try { 
       // Extract deviceId and chatbotId from the request body
       const { deviceId, chatbotId, message } = body;
+      // console.log(deviceId, chatbotId, message);
 
       // Format the new user message
       const userMessage = {
@@ -36,6 +36,8 @@ export class ChatModelController {
       // Retrieve and reformat the conversation history for the chat model
       const history = this.messageHistoryService.getHistory(deviceId, chatbotId)
         .map(msg => ({ role: msg.role, content: msg.content }));
+
+      console.log(history);
 
       // Get the AI chat model's response based on the entire conversation history
       const chatResponse = await this.chatModelService.getChatResponse(history);

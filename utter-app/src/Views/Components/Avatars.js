@@ -2,7 +2,7 @@ import React from "react";
 import { View, Text, Image } from "react-native";
 import { generalStyles } from "../../assets/stylesheets/general_styles";
 
-const Tim = () => {
+const Avatar = () => {
   return (
     <View>
       <Image
@@ -13,4 +13,4 @@ const Tim = () => {
   );
 };
 
-export default Tim;
+export default Avatar;

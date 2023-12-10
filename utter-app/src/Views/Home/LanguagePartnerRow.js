@@ -1,13 +1,13 @@
 import React from "react";
 import { View, Text, Image, StyleSheet } from "react-native";
-import Tim from "../Components/./Avatars";
+import Avatar from "../Components/./Avatars";
 
-const LanguagePartnerRow = () => {
+const LanguagePartnerRow = ({ chatbotId }) => {
   return (
     <View style={styles.row}>
-      <Tim />
+      <Avatar />
       <View style={styles.textContainer}>
-        <Text style={styles.name}>Tim</Text>
+        <Text style={styles.name}>{chatbotId}</Text>
         <Text style={styles.details}>
           Plans on the weekend, taking a walk, coffee, ordering...
         </Text>
