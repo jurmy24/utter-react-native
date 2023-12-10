@@ -17,8 +17,13 @@ import useFileUpload from "../../hooks/useFileUpload"; // Import the new hook
 import useAudioRecorder from "../../hooks/useAudioRecorder"; // Import the new hook
 import io from "socket.io-client";
 import useSpeechSynthModel from "../../hooks/useSpeechSynth";
+import uniqueId from "../../uuid_file";
 
-const socket = io("http://130.229.177.235:3000");
+// const socket = io("http://130.229.177.235:3000");
+
+const socket = io("http://130.229.177.235:3000", {
+  query: { uniqueId, chatbotId },
+});
 
 const ChatView = () => {
   const [inputText, setInputText] = useState("");
@@ -31,14 +36,16 @@ const ChatView = () => {
 
   /*  ----------Handle socket IO for chat history updates----------- */
   useEffect(() => {
+    // Handle connection
     socket.on("connect", () => {
       console.log("Connected to server via WebSocket");
-      socket.emit("requestChatHistory");
+      // Request the chat history for the specific device and chatbot
+      socket.emit("requestChatHistory", { deviceId, chatbotId });
     });
 
+    // Handle receiving chat history
     socket.on("receiveChatHistory", (history) => {
-      console.log("Received message history:");
-      // Update your state or UI with the received history
+      console.log("Received message history:", history);
       setChatHistory(history);
     });
 
@@ -46,6 +53,7 @@ const ChatView = () => {
     return () => {
       socket.off("connect");
       socket.off("receiveChatHistory");
+      socket.disconnect();
     };
   }, []);
 
