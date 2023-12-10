@@ -20,7 +20,7 @@ export const introStyles = StyleSheet.create({
         paddingHorizontal: 10,
         paddingVertical: 60,
       },
-      textContainer: {
+      titleContainer: {
         alignItems: 'center',
         paddingHorizontal: 20,
         paddingVertical: 50,
