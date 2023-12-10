@@ -26,10 +26,9 @@ export class TranscriptionController {
     try {
       // Transcribe the audio file using the transcription service
       const transcription = await this.transcriptionService.transcribeAudio(file);
-      console.log("AI: ", transcription);
 
       return response.status(200).json({ transcription });
-      
+
     } catch (error) {
       // Handle any errors that may have occurred
       if (error.response) {
