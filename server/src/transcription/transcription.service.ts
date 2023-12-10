@@ -93,7 +93,9 @@ export class TranscriptionService {
       const formData = new FormData();
       formData.append('file', fs.createReadStream(filePath));
       formData.append('model', 'whisper-1');
-
+      // Add a prompt to ensure the model includes filler words (this might help assuming language spoken)
+      formData.append('prompt', "Umm, let me think like, hmm... Okay, here's what I'm, like, thinking.")
+      
       const headers = {
         ...formData.getHeaders(),
         'Authorization': `Bearer ${this.openAiApiKey}`
