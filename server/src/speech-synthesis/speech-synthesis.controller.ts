@@ -9,8 +9,7 @@ export class SpeechSynthesisController {
   @Post('synthesize')
   async synthesize(@Body('text') text: string, @Res() res: Response) {
     try {
-      const audioStream = await this.speechSynthesisService.synthesizeText(text);
-      console.log(audioStream);
+      const audioStream = await this.speechSynthesisService.synthesizeSpeech(text, true); // currently using openAI
       res.set({
         'Content-Type': 'audio/mpeg',
         'Content-Length': audioStream.length,
