@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TextInput, TouchableOpacity, ScrollView, StyleSheet, Dimensions, SafeAreaView } from 'react-native';
 import MessageView from './MessageView';
 import { useNavigation } from '@react-navigation/native';
+import MessageInputContainer from '../Components/./MessageInputContainer';
 
 const ChatView = () => {
   const [isInCall, setIsInCall] = useState(false);
@@ -41,19 +42,7 @@ const ChatView = () => {
           <MessageView key={index} sender={messageData.sender} message={messageData.content} />
         ))}
       </ScrollView>
-      <View style={styles.inputContainer}>
-        <TextInput
-          value={text}
-          onChangeText={setText}
-          style={styles.input}
-          placeholder="Type something..."
-          onSubmitEditing={handleSend}
-        />
-        <TouchableOpacity onPress={() => navigation.navigate('Call')} style={styles.callButton}>
-            {/* Here above we should use the handleJoinCall funciton later */}
-          <Text style={styles.callButtonText}>Join Talk</Text>
-        </TouchableOpacity>
-      </View>
+      <MessageInputContainer/>
       <TouchableOpacity onPress={() => navigation.goBack()} style={styles.backButton}>
         <Text style={styles.backButtonText}>Back</Text>
       </TouchableOpacity>
