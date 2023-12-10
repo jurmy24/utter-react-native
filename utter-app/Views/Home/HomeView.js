@@ -3,6 +3,7 @@ import { View, SafeAreaView, ScrollView, Dimensions, TouchableOpacity, Text, Ima
 import { useNavigation } from '@react-navigation/native';
 import LanguagePartnerRow from './LanguagePartnerRow';
 import { generalStyles } from '../../assets/stylesheets/general_styles';
+import MessageInputContainer from '../Components/MessageInputContainer';
 
 const assetsPath = '../../assets/'
 
@@ -35,6 +36,8 @@ const HomeView = () => {
       <TouchableOpacity style={generalStyles.addButton} onPress={() => {/* Action for the "+" button */}}>
         <Text style={generalStyles.circularButtonText}>+</Text>
       </TouchableOpacity>
+
+      <MessageInputContainer/>
     </SafeAreaView>
     </ImageBackground>
   );
