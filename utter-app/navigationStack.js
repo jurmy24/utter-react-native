@@ -5,6 +5,7 @@ import MainContainer from './Views/Intro/MainContainerIntro';
 import HomeView from './Views/Home/HomeView';
 import ChatView from './Views/Chat/ChatView';
 import CallView from './Views/Call/CallView';
+import LanguageSelection from './Views/Languages/LanguageSelection';
 
 const Stack = createNativeStackNavigator();
 
@@ -16,6 +17,7 @@ function MyStack() {
       <Stack.Screen name="Home" component={HomeView} />
       <Stack.Screen name="Chat" component={ChatView} />
       <Stack.Screen name="Call" component={CallView} />
+      <Stack.Screen name="Languages" component={LanguageSelection}/>
       {/* <Stack.Screen name="Intro" component={MainContainer}/> */}
     </Stack.Navigator>
   );
