@@ -4,103 +4,177 @@ import {
   Text,
   TouchableOpacity,
   StyleSheet,
-  Dimensions,
   SafeAreaView,
+  ImageBackground,
   Image,
 } from "react-native";
+import useFileUpload from "../../hooks/useFileUpload";
+import useAudioRecorder from "../../hooks/useAudioRecorder";
+import useSpeechSynth from "../../hooks/useSpeechSynth";
+import Avatar from "../Components/Avatars";
+import { useRoute } from "@react-navigation/native";
+import { generalStyles } from "../stylesheets/general_styles";
+import { BallIndicator } from "react-native-indicators";
+import useTextModel from "../../hooks/textModel";
+
 // import PartnerImage from './PartnerImage'; // Assuming you have this component
 // import LoadingBalls from './LoadingBalls'; // Assuming you have this component
 
-const screenWidth = Dimensions.get("window").width;
-const screenHeight = Dimensions.get("window").height;
+const assetsPath = "../../assets/";
+// Import all avatar images
+const speaking_icon = {
+  white: require(assetsPath + "icons/speaking_icon_white.png"),
+  blue: require(assetsPath + "icons/speaking_icon_blue.png"),
+};
 
 const CallView = ({ navigation }) => {
+  // Check which chatview we are entering
+  const route = useRoute();
+  const chatbotId = route.params?.chatbotId; // This will be either "english" or "french"
+  const languagePartnerName =
+    chatbotId === "english-chatbot" ? "Tim" : "Claire";
+
+  const { uploadAudioFile, uploadStatus, error } = useFileUpload(chatbotId);
+  const { startRecording, stopRecording } = useAudioRecorder();
   const [isRecording, setIsRecording] = useState(false);
-  const [userTranscript, setUserTranscript] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const { synthesizeText, playAudio, stopAudio } = useSpeechSynth(chatbotId);
+  const { submitMessage } = useTextModel(chatbotId);
 
-  useEffect(() => {
-    // Initialize Voice or Tts here
-    // Example:
-    Voice.onSpeechResults = onSpeechResults;
+  // const navigation = useNavigation(); // This hook is provided by React Navigation
 
-    return () => {
-      // Remember to destroy the listeners when the component unmounts
-      Voice.destroy().then(Voice.removeAllListeners);
-    };
-  }, []);
-
-  const onSpeechResults = (result) => {
-    if (result.value && result.value.length > 0) {
-      setUserTranscript(result.value[0]); // Update state with the latest transcription
-    }
-  };
-
-  const startRecording = () => {
+  /* -----------Handle verbal submission------------- */
+  const handleStartRecording = () => {
     setIsRecording(true);
-    // Voice.start("en-US"); // Start recording
+    startRecording();
   };
 
-  const endRecording = () => {
+  const handleSendRecording = async () => {
     setIsRecording(false);
-    // Voice.stop(); // Stop recording
-  };
+    setIsLoading(true); // Start loading
+    let uri;
+    if (isRecording) {
+      uri = await stopRecording(); // Stop the recording if it's still happening
+    } else {
+      console.error("I think the audio message was too short");
+    }
 
-  const sendMessage = () => {
-    setIsLoading(true);
-    // Logic to send the userTranscript to your chat model and get a response
-    // After getting the response, use Tts to speak out the response
-    // Tts.speak("This is the response."); // Replace with actual response
-    setIsLoading(false);
+    if (uri) {
+      try {
+        const transcription = await uploadAudioFile(uri);
+        console.log("Transcribed audio file:", transcription);
+        const gptResponse = await submitMessage(transcription); // TODO: sort out message receival
+        const audioFilePath = await synthesizeText(gptResponse);
+        await playAudio(audioFilePath);
+      } catch (error) {
+        console.error("Error during file upload:", error);
+        // Handle errors in UI, such as showing an error message
+      }
+    } else {
+      console.log("No recording found");
+      // Optionally handle the case where there is no recording
+    }
+    setIsLoading(false); // Stop loading
   };
-
-  // if (isLoading) {
-  //   return <LoadingBalls />;
-  // }
 
   return (
-    <SafeAreaView style={styles.container}>
-      <Image
-        source={require("./../../assets/avatars/tim_avatar.png")}
-        style={{ width: 200, height: 200, borderRadius: 10 }}
-      />
-      {/* Add other UI components here */}
-      <TouchableOpacity
-        onPress={startRecording}
-        onRelease={endRecording}
-        style={styles.recordButton}
-      >
-        <Text>{isRecording ? "Recording..." : "Press to speak"}</Text>
-      </TouchableOpacity>
-      {/* Add a button to end the call */}
-      <TouchableOpacity
-        onPress={() => navigation.navigate("Chat")}
-        style={styles.endCallButton}
-      >
-        <Text>End Call</Text>
-      </TouchableOpacity>
-    </SafeAreaView>
+    <ImageBackground
+      source={require(assetsPath + "images/slidingBackgroundWide.png")}
+      style={generalStyles.background_style}
+    >
+      <SafeAreaView style={generalStyles.safeArea}>
+        <View style={styles.content}>
+          <View style={{ marginBottom: 40 }}>
+            <Avatar chatbotId={chatbotId} size={150} />
+          </View>
+          <Text style={styles.chatbotName}>{languagePartnerName}</Text>
+          <View style={{ marginVertical: 80 }}></View>
+
+          {isLoading && (
+            <View style={styles.loadingOverlay}>
+              <BallIndicator color="blue" />
+            </View>
+          )}
+
+          <TouchableOpacity
+            onPress={() => {
+              stopAudio();
+              navigation.navigate("Chat", { chatbotId });
+            }}
+            style={styles.endCallButton}
+          >
+            <Text style={styles.endCallButtonText}>End Call</Text>
+          </TouchableOpacity>
+
+          <TouchableOpacity
+            onPressIn={handleStartRecording}
+            onPressOut={handleSendRecording}
+            style={{
+              ...styles.recordButton,
+              backgroundColor: isRecording ? "#5A5AF6" : "white",
+            }}
+          >
+            <Image
+              source={
+                isRecording ? speaking_icon["white"] : speaking_icon["blue"]
+              }
+              style={{ width: 50, height: 50 }}
+            />
+          </TouchableOpacity>
+          <Text style={styles.recordButtonText}>
+            {isRecording ? "Recording..." : "Push and hold to talk"}
+          </Text>
+        </View>
+      </SafeAreaView>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: "center",
+  content: {
+    flexDirection: "vertical",
     alignItems: "center",
+    justifyContent: "space-around",
+    height: "100%", // Adjust as needed
+  },
+  chatbotName: {
+    fontSize: 24,
+    marginVertical: 40,
   },
   recordButton: {
     width: 120,
     height: 120,
     borderRadius: 60,
-    backgroundColor: "blue",
     justifyContent: "center",
     alignItems: "center",
+    marginVertical: 20,
+  },
+  recordButtonText: {
+    color: "white",
+    fontSize: 14,
+    marginBottom: 15,
   },
   endCallButton: {
-    // Styles for your end call button
+    backgroundColor: "red",
+    padding: 15,
+    borderRadius: 10,
+    marginTop: 20,
   },
-  // Add styles for other components as needed
+  endCallButtonText: {
+    color: "white",
+    fontSize: 16,
+  },
+  loadingOverlay: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    // backgroundColor: "rgba(128, 128, 128, 0.5)", // Greyed out background
+    justifyContent: "center",
+    alignItems: "center",
+    zIndex: 1, // Make sure it covers other content
+  },
 });
 
 export default CallView;

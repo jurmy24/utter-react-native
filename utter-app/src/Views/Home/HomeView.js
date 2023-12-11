@@ -76,7 +76,6 @@ const HomeView = () => {
       <SafeAreaView
         style={{
           ...generalStyles.safeArea,
-          paddingTop: Platform.OS === "android" ? 25 : 0,
           flex: 0,
         }}
       >

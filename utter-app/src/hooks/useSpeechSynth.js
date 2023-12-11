@@ -1,9 +1,12 @@
+import { useState } from "react";
 import * as FileSystem from "expo-file-system";
 import { Audio } from "expo-av";
 import axios from "axios";
 import base64 from "react-native-base64";
 
 const useSpeechSynth = (chatbotId) => {
+  // State to keep track of the currently playing sound
+  const [currentSound, setCurrentSound] = useState(null);
   const synthesizeText = async (text) => {
     try {
       const response = await axios.post(
@@ -48,6 +51,7 @@ const useSpeechSynth = (chatbotId) => {
 
       // Creating and playing the sound
       const { sound } = await Audio.Sound.createAsync({ uri: filePath });
+      setCurrentSound(sound); // Store the sound object
       await sound.playAsync();
 
       sound.setOnPlaybackStatusUpdate(async (playbackStatus) => {
@@ -73,7 +77,20 @@ const useSpeechSynth = (chatbotId) => {
     }
   };
 
-  return { synthesizeText, playAudio };
+  const stopAudio = async () => {
+    try {
+      if (currentSound) {
+        await currentSound.stopAsync();
+        // Optionally, unload the sound after stopping
+        await currentSound.unloadAsync();
+        setCurrentSound(null); // Reset the sound object
+      }
+    } catch (error) {
+      console.error("Error stopping audio:", error);
+    }
+  };
+
+  return { synthesizeText, playAudio, stopAudio };
 };
 
 export default useSpeechSynth;

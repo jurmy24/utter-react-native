@@ -6,23 +6,22 @@ import {
   ScrollView,
   Text,
   StyleSheet,
-  SafeAreaView,
   KeyboardAvoidingView,
+  Keyboard,
   Platform,
+  ImageBackground,
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { BallIndicator } from "react-native-indicators";
 import useTextModel from "../../hooks/textModel";
-import useFileUpload from "../../hooks/useFileUpload"; // Import the new hook
-import useAudioRecorder from "../../hooks/useAudioRecorder"; // Import the new hook
 import io from "socket.io-client";
-import useSpeechSynthModel from "../../hooks/useSpeechSynth";
 import uniqueId from "../../uuid_file";
 import { useRoute, useNavigation } from "@react-navigation/native";
+import { generalStyles } from "../stylesheets/general_styles";
+import Avatar from "../Components/Avatars";
+import TypingIndicator from "../Components/TypingIndicator"; // Import your typing indicator component
 
-// const socket = io("http://130.229.177.235:3000", {
-//   query: { uniqueId, chatbotId },
-// });
+const assetsPath = "../../assets/";
 
 const initializeSocket = (chatbotId) => {
   console.log(uniqueId, chatbotId);
@@ -36,18 +35,17 @@ const ChatView = () => {
   // Check which chatview we are entering
   const route = useRoute();
   const chatbotId = route.params?.chatbotId; // This will be either "english" or "french"
-
+  const languagePartnerName =
+    chatbotId === "english-chatbot" ? "Tim" : "Claire";
   const navigation = useNavigation();
 
   // TODO: set a local chatId in the parameters of this to distinguish between the different chats a user can have
   const [inputText, setInputText] = useState("");
-  const { isRecording, startRecording, stopRecording } = useAudioRecorder();
   const { submitMessage } = useTextModel(chatbotId);
-  const { uploadAudioFile, uploadStatus, error } = useFileUpload(chatbotId);
   const [isLoading, setIsLoading] = useState(false);
   const [chatHistory, setChatHistory] = useState([]);
-  const { synthesizeText, playAudio } = useSpeechSynthModel(chatbotId);
   const deviceId = uniqueId;
+  const [isKeyboardVisible, setKeyboardVisible] = useState(false);
 
   /*  ----------Handle socket IO for chat history updates----------- */
   const socket = useRef(null);
@@ -76,44 +74,29 @@ const ChatView = () => {
     };
   }, [chatbotId]);
 
+  /*  ----------Handle button swap during keyboard popup----------- */
+  useEffect(() => {
+    const keyboardDidShowListener = Keyboard.addListener(
+      "keyboardDidShow",
+      () => setKeyboardVisible(true)
+    );
+    const keyboardDidHideListener = Keyboard.addListener(
+      "keyboardDidHide",
+      () => setKeyboardVisible(false)
+    );
+
+    return () => {
+      keyboardDidHideListener.remove();
+      keyboardDidShowListener.remove();
+    };
+  }, []);
+
   /*  ----------Handle textual submission----------- */
   const handleSendText = async () => {
     setIsLoading(true); // Start loading
     console.log("This is the input text:", inputText);
     await submitMessage(inputText);
     setInputText("");
-    setIsLoading(false); // Stop loading
-  };
-
-  /* -----------Handle verbal submission------------- */
-  const handleStartRecording = () => {
-    startRecording();
-  };
-
-  const handleSendRecording = async () => {
-    setIsLoading(true); // Start loading
-    let uri;
-    if (isRecording) {
-      uri = await stopRecording(); // Stop the recording if it's still happening
-    } else {
-      console.error("I think the audio message was too short");
-    }
-
-    if (uri) {
-      try {
-        const transcription = await uploadAudioFile(uri);
-        console.log("Transcribed audio file:", transcription);
-        const gptResponse = await submitMessage(transcription); // TODO: sort out message receival
-        const audioFilePath = await synthesizeText(gptResponse);
-        await playAudio(audioFilePath);
-      } catch (error) {
-        console.error("Error during file upload:", error);
-        // Handle errors in UI, such as showing an error message
-      }
-    } else {
-      console.log("No recording found");
-      // Optionally handle the case where there is no recording
-    }
     setIsLoading(false); // Stop loading
   };
 
@@ -129,18 +112,38 @@ const ChatView = () => {
 
   /*  ----------View----------- */
   return (
-    <SafeAreaView style={{ flex: 1 }}>
-      <KeyboardAvoidingView
-        behavior={Platform.OS === "ios" ? "padding" : "height"}
-        style={{ flex: 1 }}
+    <ImageBackground
+      source={require(assetsPath + "images/slidingBackgroundWide.png")}
+      style={generalStyles.background_style}
+    >
+      <View
+        style={{
+          ...generalStyles.row,
+          backgroundColor: "#ffff",
+          width: "100%",
+          paddingTop: 40,
+          borderBottomLeftRadius: 15,
+          borderBottomRightRadius: 15,
+        }}
       >
         <TouchableOpacity
           onPress={() => navigation.goBack()}
           style={styles.backButton}
         >
-          <Icon name="arrow-left" size={20} color="black" />
+          <Icon name="arrow-left" size={20} color="#5A5AF6" />
         </TouchableOpacity>
-        <ScrollView style={styles.messagesContainer} ref={scrollViewRef}>
+        <Text style={generalStyles.header}>{languagePartnerName}</Text>
+        <Avatar chatbotId={chatbotId} size={40} />
+      </View>
+      <KeyboardAvoidingView
+        behavior={Platform.OS === "ios" ? "padding" : "height"}
+        style={{ flex: 1 }}
+      >
+        <ScrollView
+          style={{ padding: 10, marginBottom: 10 }}
+          ref={scrollViewRef}
+          contentContainerStyle={styles.scrollViewContent}
+        >
           {chatHistory.map((msg, index) => (
             <View
               key={index}
@@ -148,22 +151,24 @@ const ChatView = () => {
                 msg.role === "user" ? styles.userMessage : styles.aiMessage
               }
             >
-              <Text>{msg.content}</Text>
+              <Text
+                style={{
+                  color: msg.role === "user" ? "white" : "black",
+                  lineHeight: 18,
+                }}
+              >
+                {msg.content}
+              </Text>
             </View>
           ))}
         </ScrollView>
+        {/* Typing Indicator */}
+        {isLoading && (
+          <View style={styles.typingIndicator}>
+            <TypingIndicator />
+          </View>
+        )}
         <View style={styles.inputContainer}>
-          <TouchableOpacity
-            onPressIn={handleStartRecording}
-            onPressOut={handleSendRecording}
-            style={styles.transcriptionButton}
-          >
-            <Icon
-              name="microphone"
-              size={25}
-              color={isRecording ? "red" : "blue"}
-            />
-          </TouchableOpacity>
           <TextInput
             value={inputText}
             onChangeText={setInputText}
@@ -171,18 +176,30 @@ const ChatView = () => {
             placeholder="Type your message here"
             onSubmitEditing={handleSendText}
           />
-          <TouchableOpacity onPress={handleSendText} style={styles.sendButton}>
-            <Icon name="send" size={20} color={isLoading ? "gray" : "blue"} />
+          <TouchableOpacity
+            onPress={
+              inputText
+                ? handleSendText
+                : () => navigation.navigate("Call", { chatbotId: chatbotId })
+            }
+            style={styles.button}
+          >
+            <Icon
+              name={inputText ? "send" : "phone"}
+              size={inputText ? 20 : 25}
+              style={{ paddingRight: inputText ? 3 : 0 }}
+              color={inputText ? (isLoading ? "gray" : "white") : "white"}
+            />
           </TouchableOpacity>
         </View>
-        {/* Loading Overlay */}
+        {/* Loading Overlay
         {isLoading && (
           <View style={styles.loadingOverlay}>
             <BallIndicator color="blue" />
           </View>
-        )}
+        )} */}
       </KeyboardAvoidingView>
-    </SafeAreaView>
+    </ImageBackground>
   );
 };
 const styles = StyleSheet.create({
@@ -190,11 +207,13 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     padding: 10,
+    paddingTop: 0,
+    width: "100%",
+    paddingHorizontal: Platform.OS === "ios" ? 20 : 15,
+    marginBottom: Platform.OS === "ios" ? 15 : 5,
   },
   input: {
-    flex: 1,
-    borderWidth: 1,
-    borderColor: "gray",
+    flex: 4,
     borderRadius: 20,
     padding: 10,
     marginRight: 10,
@@ -205,30 +224,29 @@ const styles = StyleSheet.create({
     padding: 10,
     marginRight: 10,
   },
-  transcriptionButtonText: {
-    color: "white",
-  },
-  sendButtonText: {
-    color: "white",
-  },
-  messagesContainer: {
-    flex: 1,
-  },
   userMessage: {
     // Styles for user's chat bubbles
-    backgroundColor: "#e6e6e6",
+    backgroundColor: "#5A5AF6",
     alignSelf: "flex-end",
-    padding: 8,
-    borderRadius: 10,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderRadius: 15,
     margin: 4,
+    marginVertical: 5,
+    marginLeft: 30,
+    borderBottomRightRadius: 2,
   },
   aiMessage: {
     // Styles for AI's chat bubbles
-    backgroundColor: "#d1edf2",
+    backgroundColor: "white",
     alignSelf: "flex-start",
-    padding: 8,
-    borderRadius: 10,
+    paddingHorizontal: 15,
+    paddingVertical: 10,
+    borderRadius: 15,
     margin: 4,
+    marginVertical: 5,
+    borderBottomLeftRadius: 2,
+    marginRight: 30,
   },
   loadingOverlay: {
     position: "absolute",
@@ -240,6 +258,29 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     alignItems: "center",
     zIndex: 1, // Make sure it covers other content
+  },
+  button: {
+    width: 45, // Set a fixed width for the circle
+    height: 45, // Set a fixed height for the circle
+    borderRadius: 22.5, // Half of the width and height to make it a perfect circle
+    backgroundColor: "#5A5AF6", // Use a color that stands out for the button
+    alignItems: "center",
+    justifyContent: "center",
+    // Add shadow or other styling as needed
+  },
+  backButton: {
+    padding: 10,
+  },
+  scrollViewContent: {
+    paddingBottom: 30, // Adjust this value to add more or less space at the bottom
+  },
+  typingIndicator: {
+    position: "absolute",
+    left: 0,
+    right: 0,
+    bottom: 50, // Adjust this value to position the indicator appropriately
+    padding: 20,
+    alignItems: "left",
   },
 });
 

@@ -16,6 +16,7 @@ export const generalStyles = StyleSheet.create({
     flex: 1,
     backgroundColor: "transparent",
     width: "100%",
+    paddingTop: Platform.OS === "android" ? 30 : 0,
   },
 
   row: {

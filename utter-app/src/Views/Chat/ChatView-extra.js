@@ -19,28 +19,6 @@ const ChatView = () => {
   const navigation = useNavigation();
   const screenWidth = Dimensions.get("window").width;
 
-  // Fetch chat history when component mounts
-  useEffect(() => {
-    // Replace with your logic to fetch chat messages
-    // setChatMessages(fetchYourChatHistory());
-  }, []);
-
-  const handleSend = () => {
-    // Logic to send a message and update chat history
-    // You would call something like your chat model's send function here
-    setText("");
-    // setChatMessages(updateYourChatHistory());
-  };
-
-  const handleJoinCall = () => {
-    // Logic to handle joining the call
-    setIsInCall(true);
-  };
-
-  //   if (isInCall) {
-  //     return <SpeakerView />;
-  //   }
-
   return (
     <SafeAreaView style={{ flex: 1 }}>
       {/* Your logic to display the background image */}
