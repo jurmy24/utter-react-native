@@ -12,23 +12,23 @@ const OnboardingView = ({ navigation }) => {
       style={generalStyles.background_style}
     >
       <SafeAreaView style={generalStyles.safeArea}>
-  
-          <View style={introStyles.logoContainer}>
-            <Logo style={introStyles.logo} />
-          </View>
-          <View style={introStyles.padding}></View>
-          <View style={introStyles.onboardingViewContent}>
-            <View style={introStyles.textContainer}>
-              <Text style={introStyles.title}>
-                Get your artificial language partner to practice speaking.
-              </Text>
-              <Text style={introStyles.subtitle}>
-                With our AI-powered language partner you can learn your language
-                like a pro.
-              </Text>
-            </View>
-            <ArrowButton onPress={() => navigation.navigate("Login")} style={introStyles.arrowButton}/>
-          </View>
+        <View style={introStyles.logoContainer}>
+          <Logo style={introStyles.logo} />
+        </View>
+
+        <View style={generalStyles.column}>
+          <Text style={introStyles.title}>
+            Get your artificial language partner to practice speaking.
+          </Text>
+          <Text style={introStyles.subtitle}>
+            With our AI-powered language partner you can learn your language
+            like a pro.
+          </Text>
+          <ArrowButton
+            onPress={() => navigation.navigate("Login")}
+            style={introStyles.arrowButton}
+          />
+        </View>
       </SafeAreaView>
     </ImageBackground>
   );

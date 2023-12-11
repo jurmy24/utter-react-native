@@ -80,6 +80,15 @@ export const generalStyles = StyleSheet.create({
     justifyContent: "space-between",
     // Add any additional styling for the row
   },
+
+  column: {
+    flexDirection: "column", // Aligns children horizontally
+    alignItems: "center", // Centers children vertically in the cross axis
+    paddingHorizontal: 25,
+    justifyContent: "space-between",
+    // Add any additional styling for the row
+  },
+
   flagContainer: {
     position: "absolute",
     bottom: 0,
