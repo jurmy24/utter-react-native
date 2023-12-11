@@ -20,14 +20,14 @@ import useSpeechSynthModel from "../../hooks/useSpeechSynth";
 import uniqueId from "../../uuid_file";
 import { useRoute, useNavigation } from "@react-navigation/native";
 
-// const socket = io("http://130.229.177.235:3000", {
+// const socket = io("http://130.229.140.197:3000", {
 //   query: { uniqueId, chatbotId },
 // });
 
 const initializeSocket = (chatbotId) => {
   console.log(uniqueId, chatbotId);
   const deviceId = uniqueId;
-  return io("http://130.229.177.235:3000", {
+  return io("http://130.229.140.197:3000", {
     query: { deviceId, chatbotId },
   });
 };

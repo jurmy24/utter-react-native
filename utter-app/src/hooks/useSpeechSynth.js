@@ -7,7 +7,7 @@ const useSpeechSynth = (chatbotId) => {
   const synthesizeText = async (text) => {
     try {
       const response = await axios.post(
-        "http://130.229.177.235:3000/speech-synthesis/synthesize",
+        "http://130.229.140.197:3000/speech-synthesis/synthesize",
         { chatbotId: chatbotId, message: text },
         { responseType: "arraybuffer" }
       );
