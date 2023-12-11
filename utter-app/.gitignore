@@ -8,6 +8,9 @@ node_modules/
 dist/
 web-build/
 
+# Visual Studio Code
+.vscode/
+
 # Native
 *.orig.*
 *.jks
