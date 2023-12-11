@@ -73,6 +73,19 @@ const HomeView = () => {
       style={generalStyles.background_style}
     >
       <SafeAreaView style={generalStyles.safeArea}>
+        <View style={generalStyles.row}>
+          <Text style={{ fontSize: 20 }}>Language Partners</Text>
+          {/* "+" Button at the top */}
+          <TouchableOpacity
+            style={generalStyles.addButton}
+            onPress={() => {
+              /* Action for the "+" button */
+            }}
+          >
+            <Text style={generalStyles.circularButtonText}>+</Text>
+          </TouchableOpacity>
+        </View>
+
         <ScrollView style={generalStyles.languagePartnerListContainer}>
           <View style={generalStyles.languagePartnersList}>
             {/* This TouchableOpacity should navigate to the ChatView when pressed */}
@@ -87,6 +100,7 @@ const HomeView = () => {
                 style={{ paddingHorizontal: 15 }}
               />
             </TouchableOpacity>
+            <View style={generalStyles.divider} />
 
             <TouchableOpacity
               onPress={() =>
@@ -104,16 +118,6 @@ const HomeView = () => {
             {/* Add more LanguagePartnerRows here as needed */}
           </View>
         </ScrollView>
-
-        {/* "+" Button at the top */}
-        <TouchableOpacity
-          style={generalStyles.addButton}
-          onPress={() => {
-            /* Action for the "+" button */
-          }}
-        >
-          <Text style={generalStyles.circularButtonText}>+</Text>
-        </TouchableOpacity>
       </SafeAreaView>
     </ImageBackground>
   );
