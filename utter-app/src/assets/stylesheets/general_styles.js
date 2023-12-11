@@ -15,7 +15,7 @@ export const generalStyles = StyleSheet.create({
     safeArea: {
             flex: 1,
             backgroundColor: 'transparent',
-            paddingTop: 0,
+            paddingTop: 120,
           },
     // Maybe this doesn't belong here
     languagePartnerListContainer: {
@@ -50,27 +50,83 @@ export const generalStyles = StyleSheet.create({
             alignItems: 'center',
           },
 
-    circularButtonText: {
-            fontSize: 24,
-            color: 'white',
+          circularButtonText: {
+                  fontSize: 24,
+                  color: 'white',
+                },
+
+          languagePartnerTextContainer: {
+                  width: screenWidth,
+                  justifyContent: 'center',
+                  marginLeft: 12, // Spacing between image and text
+                },
+
+          wrappedText: {
+            flexWrap: 'wrap',
+            fontSize: 14, // Set font size
+            color: 'gray', // Set text color
           },
 
-    languagePartnerTextContainer: {
-            width: screenWidth,
+          partnerImageContainer: {
+            width: 80,
+            height: 80,
+            backgroundColor: '#c2ceea',
+            borderRadius: 100, // A large value to make it a circle
+            overflow: 'hidden',
+          },
+
+          partnerImage: {
+            flex: 1,
+            width: '100%',
+            height: '100%',
+            resizeMode: 'cover',
+          },
+
+          flagContainer: {
+            position: 'absolute',
+            bottom: 0,
+            alignSelf: 'center',
             justifyContent: 'center',
-            marginLeft: 12, // Spacing between image and text
+            alignItems: 'center',
+            width: 30,
+            height: 30,
+            borderRadius: 30 / 2, // Half of the width/height for a circular shape
+            overflow: 'hidden',
+          },
+          flag: {
+            width: '100%',
+            height: '100%',
+            resizeMode: 'cover',
+            borderRadius: 30 / 2, // Match the borderRadius of the container
+            borderWidth: 1,
+            borderColor: 'white',
           },
 
-    wrappedText: {
-      flexWrap: 'wrap',
-      fontSize: 14, // Set font size
-      color: 'gray', // Set text color
+    inputContainer: {
+            flexDirection: 'row',
+            alignItems: 'center',
+            padding: 10,
+            backgroundColor: '#FFFFFF',
           },
 
-    partnerImage: {
-            width: 50, // Set the image width
-            height: 50, // Set the image height
-            borderRadius: 25, // Make the image circular
-            // Add any additional styling for the image
+    input: {
+            flex: 1,
+            borderWidth: 1,
+            borderColor: 'gray',
+            borderRadius: 20,
+            padding: 10,
+            marginRight: 10,
+            backgroundColor: 'white',
+          },
+
+    callButton: {
+            backgroundColor: 'blue',
+            borderRadius: 50,
+            padding: 20,
+          },
+
+    callButtonText: {
+            color: 'white',
+            fontWeight: 'bold',
           },
               });
