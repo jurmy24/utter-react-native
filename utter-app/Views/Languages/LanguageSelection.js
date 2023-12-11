@@ -8,6 +8,7 @@ import {
   Text,
   ImageBackground,
   StyleSheet,
+  Image,
 } from "react-native";
 import { useNavigation, useFocusEffect } from "@react-navigation/native";
 import LanguageRow from "./LanguageRow";
@@ -45,6 +46,16 @@ const LanguageSelection = () => {
       <ScrollView style={styles.languageListContainer}>
 
         <View style={{ flex: 1 }}>
+
+            {/* Exit Button */}
+            <TouchableOpacity
+                onPress={() => navigation.navigate('Home')}
+                style={styles.exitButton}
+            >
+                <Image source={require(assetsPath + "images/X.png")} />
+            </TouchableOpacity>
+
+
           <View style={[generalStyles.column, {alignItems: 'left'}]}>
             <Text style={[generalStyles.header, { marginTop: 100 }]}>
               I want to practice
@@ -127,6 +138,20 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
     textAlign: 'center',
   },
+
+  exitButton: {
+    position: "absolute",
+    top: 10,
+    right: 10,
+    width: 44,
+    height: 44,
+    borderRadius: 22,
+    backgroundColor: '#FFFFFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+    zIndex: 1,
+  },
+
 });
 
 export default LanguageSelection;
