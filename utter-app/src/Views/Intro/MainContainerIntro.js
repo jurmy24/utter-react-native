@@ -3,7 +3,7 @@ import { View, ImageBackground, SafeAreaView } from "react-native";
 import OnboardingView from "./OnboardingView";
 import Logo from "../../assets/images/Logo_utter.svg";
 import LoginView from "./LoginView";
-import { introStyles } from "../../assets/stylesheets/intro_styles";
+import { introStyles } from "../stylesheets/intro_styles";
 
 const MainContainer = () => {
   const [currentScreen, setCurrentScreen] = useState("onboarding");

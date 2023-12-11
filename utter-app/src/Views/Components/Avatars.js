@@ -1,6 +1,5 @@
 import React from "react";
 import { View, Image, StyleSheet } from "react-native";
-import { generalStyles } from "../../assets/stylesheets/general_styles";
 
 // Import all avatar images
 const avatarImages = {
