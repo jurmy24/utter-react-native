@@ -89,7 +89,7 @@ const LanguageSelection = () => {
             styles.nextButton,
             { backgroundColor: selectedLanguage !== null ? '#536FFF' : '#CFD7FF' },
           ]}
-          onPress={() => {/* Handle Next button press */}}
+          onPress={() => navigation.navigate('Partners')}
           disabled={selectedLanguage === null} // Disable the button if language is not selected
         >
           <Text style={styles.nextButtonText}>Next</Text>
