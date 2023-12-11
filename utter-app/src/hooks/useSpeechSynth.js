@@ -6,14 +6,8 @@ import base64 from "react-native-base64";
 const useSpeechSynth = (chatbotId) => {
   const synthesizeText = async (text) => {
     try {
-      // const response = await axios.post(
-      //   "http://192.168.10.152:3000/speech-synthesis/synthesize",
-      //   { text },
-      //   { responseType: "arraybuffer" }
-      // );
-
       const response = await axios.post(
-        "http://192.168.10.152:3000/speech-synthesis/synthesize",
+        "http://130.229.177.235:3000/speech-synthesis/synthesize",
         { chatbotId: chatbotId, message: text },
         { responseType: "arraybuffer" }
       );

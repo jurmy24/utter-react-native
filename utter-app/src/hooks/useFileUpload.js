@@ -25,7 +25,7 @@ const useFileUpload = (chatId) => {
 
     try {
       const response = await axios.post(
-        "http://192.168.10.152:3000/transcription/upload",
+        "http://130.229.177.235:3000/transcription/upload",
         formData,
         {
           headers: {

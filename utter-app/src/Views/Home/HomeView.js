@@ -28,12 +28,13 @@ const HomeView = () => {
   const refreshChatHistory = async (chatbotId) => {
     try {
       const response = await axios.get(
-        `http://192.168.10.152:3000/message-history/latest`,
+        `http://130.229.177.235:3000/message-history/latest`,
         {
           params: { deviceId: uniqueId, chatbotId },
         }
       );
       let messages = response.data;
+      let lastMessage = "";
       if (messages.length > 0) {
         lastMessage = messages[messages.length - 1].content;
         // Limit to 35 characters and append "..." if longer
