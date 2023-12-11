@@ -21,11 +21,11 @@ const LanguageSelection = () => {
   const navigation = useNavigation();
 
   // no language is selected by default
-  const [languageSelected, setLanguageSelected] = useState(false);
+  const [selectedLanguage, setSelectedLanguage] = useState(null);
 
-  const handleLanguageRowPress = () => {
+  const handleLanguageRowPress = (languageId) => {
     // Handle the logic when a language row is pressed
-    setLanguageSelected(true);
+    setSelectedLanguage(languageId);
   };
 
   return (
@@ -54,12 +54,18 @@ const LanguageSelection = () => {
           
           <View style={styles.languageList}>
             {/* Language Rows */}
-            <TouchableOpacity onPress={handleLanguageRowPress}>
-              <LanguageRow languageId="us-flag" />
+            <TouchableOpacity onPress={() => handleLanguageRowPress('us-flag')}>
+              <LanguageRow 
+                languageId="us-flag" 
+                isSelected={selectedLanguage==='us-flag'}
+            />
             </TouchableOpacity>
 
-            <TouchableOpacity onPress={handleLanguageRowPress}>
-              <LanguageRow languageId="french-flag" />
+            <TouchableOpacity onPress={() => handleLanguageRowPress('french-flag')}>
+              <LanguageRow 
+                languageId="french-flag"
+                isSelected={selectedLanguage==='french-flag'}
+              />
             </TouchableOpacity>
 
             {/* Add more LanguageRows here as needed */}
@@ -70,10 +76,10 @@ const LanguageSelection = () => {
         <TouchableOpacity
           style={[
             styles.nextButton,
-            { backgroundColor: languageSelected ? '#536FFF' : '#CFD7FF' },
+            { backgroundColor: selectedLanguage !== null ? '#536FFF' : '#CFD7FF' },
           ]}
           onPress={() => {/* Handle Next button press */}}
-          disabled={!languageSelected} // Disable the button if language is not selected
+          disabled={selectedLanguage === null} // Disable the button if language is not selected
         >
           <Text style={styles.nextButtonText}>Next</Text>
         </TouchableOpacity>

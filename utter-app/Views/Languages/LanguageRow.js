@@ -3,11 +3,28 @@ import { View, Text, StyleSheet } from "react-native";
 import Language from "../Components/Languages";
 import { generalStyles } from "../../assets/stylesheets/general_styles";
 
-const LanguageRow = ({ languageId}) => {
+const LanguageRow = ({ languageId, isSelected}) => {
   const languageName = languageId === "french-flag" ? "French" : "English";
 
   return (
-    <View style={styles.languageContainer}>
+    <View 
+      style={[
+        styles.languageContainer,
+        {
+          backgroundColor: isSelected ? "#CFD7FF" : "#FFFFFF",
+          ...isSelected && {
+            // Add shadow styles based on isSelected state
+            shadowColor: "#000",
+              shadowOffset: {
+                width: 0,
+                height: 2,
+              },
+              shadowOpacity: 0.2,
+              shadowRadius: 2,
+              elevation: 2,
+            },
+          },
+      ]}>
       <View style={generalStyles.row}>
         <Language languageId={languageId} size={40} />
         <View style={styles.textContainer}>
