@@ -19,7 +19,6 @@ export class ChatModelController {
     try { 
       // Extract deviceId and chatbotId from the request body
       const { deviceId, chatbotId, message } = body;
-      // console.log(deviceId, chatbotId, message);
 
       // Format the new user message
       const userMessage = {
@@ -28,7 +27,7 @@ export class ChatModelController {
       };
 
       // Log the User message for debugging
-      console.log("User:", userMessage.content)
+      // console.log("User:", userMessage.content)
 
       // Append the user's message to the conversation history
       this.messageHistoryService.appendToHistory(deviceId, chatbotId, userMessage);
@@ -36,8 +35,6 @@ export class ChatModelController {
       // Retrieve and reformat the conversation history for the chat model
       const history = this.messageHistoryService.getHistory(deviceId, chatbotId)
         .map(msg => ({ role: msg.role, content: msg.content }));
-
-      console.log(history);
 
       // Get the AI chat model's response based on the entire conversation history
       const chatResponse = await this.chatModelService.getChatResponse(history);
@@ -49,7 +46,7 @@ export class ChatModelController {
       };
 
       // Log the chat response for debugging
-      console.log("Assistant: ", assistantMessage.content);
+      // console.log("Assistant: ", assistantMessage.content);
 
       // Add the assistant's response to history
       this.messageHistoryService.appendToHistory(deviceId, chatbotId, assistantMessage);

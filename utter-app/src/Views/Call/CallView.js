@@ -62,8 +62,7 @@ const CallView = ({ navigation }) => {
     if (uri) {
       try {
         const transcription = await uploadAudioFile(uri);
-        console.log("Transcribed audio file:", transcription);
-        const gptResponse = await submitMessage(transcription); // TODO: sort out message receival
+        const gptResponse = await submitMessage(transcription);
         const audioFilePath = await synthesizeText(gptResponse);
         await playAudio(audioFilePath);
       } catch (error) {
@@ -71,7 +70,7 @@ const CallView = ({ navigation }) => {
         // Handle errors in UI, such as showing an error message
       }
     } else {
-      console.log("No recording found");
+      console.error("No recording found");
       // Optionally handle the case where there is no recording
     }
     setIsLoading(false); // Stop loading

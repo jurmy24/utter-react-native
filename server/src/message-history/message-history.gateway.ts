@@ -1,4 +1,4 @@
-import { WebSocketGateway, WebSocketServer, SubscribeMessage, ConnectedSocket, MessageBody } from '@nestjs/websockets';
+import { WebSocketGateway, WebSocketServer, SubscribeMessage, ConnectedSocket, MessageBody, OnGatewayConnection, OnGatewayDisconnect } from '@nestjs/websockets';
 import { Server, Socket } from 'socket.io';
 import { MessageHistoryService } from './message-history.service';
 
@@ -21,12 +21,14 @@ function logRoomsAndClients(server) {
     origin: '*', // Allow connections from any origin
   },
 })
-export class MessageHistoryGateway {
+export class MessageHistoryGateway implements OnGatewayConnection, OnGatewayDisconnect {
   @WebSocketServer()
   private server: Server;
 
-  constructor(private readonly messageHistoryService: MessageHistoryService) {}
+  // Map to keep track of deviceIds and their clientIds
+  private deviceIdMap = new Map<string, Set<string>>();
 
+  constructor(private readonly messageHistoryService: MessageHistoryService) {}
 
   // Called after the module initialization
   onModuleInit() {
@@ -35,7 +37,7 @@ export class MessageHistoryGateway {
       // Filter out the system prompt before emitting to clients
       const filteredHistory = history.filter(msg => msg.role !== 'system');
 
-      logRoomsAndClients(this.server)
+      // logRoomsAndClients(this.server)
 
       // Emit the updated history to all connected clients
       this.server.to(`${deviceId}-${chatbotId}`).emit('serverHistoryPush', filteredHistory);
@@ -52,21 +54,40 @@ export class MessageHistoryGateway {
     const chatbotId = client.handshake.query.chatbotId;
     client.join(`${deviceId}-${chatbotId}`);
 
-    // Assume deviceId and chatbotId are coming from client.handshake.query
-
     const deviceIdValue = Array.isArray(deviceId) ? deviceId[0] : deviceId;
     const chatbotIdValue = Array.isArray(chatbotId) ? chatbotId[0] : chatbotId;
 
+    // Update deviceIdMap on new connection (keeping count)
+    const clientIdSet = this.deviceIdMap.get(deviceIdValue) || new Set();
+    clientIdSet.add(client.id);
+    this.deviceIdMap.set(deviceIdValue, clientIdSet);
+
+    // Log the number of unique deviceIds
+    // console.log(`Number of active deviceIds: ${this.deviceIdMap.size}`);
+
     // Emit the current message history to the newly connected client, excluding the system prompt
     const history = this.messageHistoryService.getHistory(deviceIdValue, chatbotIdValue).filter(msg => msg.role !== 'system');
-    console.log("Message history upon connection:", history);
+    // console.log("Message history upon connection:", history);
     this.server.to(`${deviceId}-${chatbotId}`).emit('serverHistoryPush', history);
   }
 
   // Handle disconnections
   handleDisconnect(client: Socket) {
     console.log(`Client disconnected: ${client.id}`);
-    // Destroy the rooms
+
+    // Update deviceIdMap on disconnection (keeping count)
+    const deviceId = client.handshake.query.deviceId;
+    const deviceIdValue = Array.isArray(deviceId) ? deviceId[0] : deviceId;
+    const clientIdSet = this.deviceIdMap.get(deviceIdValue);
+
+    if (clientIdSet) {
+      clientIdSet.delete(client.id);
+      if (clientIdSet.size === 0) {
+        this.deviceIdMap.delete(deviceIdValue);
+      }
+    }
+    // Log the number of unique deviceIds
+    // console.log(`Number of active deviceIds: ${this.deviceIdMap.size}`);
   }
 
   // Listen for client requests for the latest message history
@@ -74,10 +95,8 @@ export class MessageHistoryGateway {
   handleMessageHistoryRequest(@ConnectedSocket() client: Socket, @MessageBody() data: any): void {
     // Retrieve deviceId and chatbotId from data or client object
     const { deviceId, chatbotId } = data; // Or get these from the client object
-    console.log(deviceId, chatbotId)
     // Emit the latest message history to the requesting client, excluding the system prompt
     const history = this.messageHistoryService.getHistory(deviceId, chatbotId).filter(msg => msg.role !== 'system');
-    console.log("History round two", history);
     client.emit('serverHistoryPush', history);
   }
 }

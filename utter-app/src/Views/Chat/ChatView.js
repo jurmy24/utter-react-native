@@ -24,9 +24,8 @@ import TypingIndicator from "../Components/TypingIndicator"; // Import your typi
 const assetsPath = "../../assets/";
 
 const initializeSocket = (chatbotId) => {
-  console.log(uniqueId, chatbotId);
   const deviceId = uniqueId;
-  return io("http://130.229.177.235:3000", {
+  return io("http://192.168.10.152:3000", {
     query: { deviceId, chatbotId },
   });
 };
@@ -55,14 +54,14 @@ const ChatView = () => {
 
     // Handle connection
     socket.current.on("connect", () => {
-      console.log("Connected to server via WebSocket");
+      // console.log("Connected to server via WebSocket");
       // Request the chat history for the specific device and chatbot
       socket.current.emit("requestChatHistory", { deviceId, chatbotId });
     });
 
     // Handle receiving chat history
     socket.current.on("serverHistoryPush", (history) => {
-      console.log("Received message history:", history);
+      // console.log("Received message history:", history);
       setChatHistory(history);
     });
 
@@ -94,7 +93,7 @@ const ChatView = () => {
   /*  ----------Handle textual submission----------- */
   const handleSendText = async () => {
     setIsLoading(true); // Start loading
-    console.log("This is the input text:", inputText);
+    // console.log("This is the input text:", inputText);
     await submitMessage(inputText);
     setInputText("");
     setIsLoading(false); // Stop loading
