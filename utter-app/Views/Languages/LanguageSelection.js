@@ -52,7 +52,7 @@ const LanguageSelection = () => {
                 onPress={() => navigation.navigate('Home')}
                 style={styles.exitButton}
             >
-                <Image source={require(assetsPath + "images/X.png")} />
+                <Image source={require(assetsPath + "icons/X.png")} />
             </TouchableOpacity>
 
 
