@@ -9,27 +9,36 @@ import {
     StyleSheet, 
     Image
 } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useNavigation } from '@react-navigation/native';
 import LanguagePartnerRow from '../Home/LanguagePartnerRow';
 import { generalStyles } from '../../assets/stylesheets/general_styles';
 
 const assetsPath = "../../assets/";
 
+const saveSelectedLanguagePartner = async (partnerId, navigation) => {
+    // Save selected partner 
+    try {
+        await AsyncStorage.setItem('selectedPartner', partnerId);
+        console.log('Selected partner saved:', partnerId);
+      } catch (error) {
+        console.error('Error saving selected partner:', error);
+      }
+
+    // Navigate to Home View
+    navigation.navigate('Home')
+  };
+
 const PartnerSelection = () => {
 
     const navigation = useNavigation();
 
-    // no partner is selected by default
+    // State to store selected partner
   const [selectedPartner, setSelectedPartner] = useState(null);
 
   const handlePartnerRowPress = (partnerId) => {
-    // Handle the logic when a language row is pressed
     setSelectedPartner(partnerId);
   };
-
-  const saveSelectedLanguagePartner = (partnerId) => {
-    // Save to json
-  }
 
     return (
         <ImageBackground 
@@ -100,7 +109,7 @@ const PartnerSelection = () => {
                         styles.addButton,
                         { backgroundColor: selectedPartner !== null ? '#536FFF' : '#CFD7FF' },
                     ]}
-                    onPress={() => {/*Navigate to Home View and add language partner there*/}}
+                    onPress={() => saveSelectedLanguagePartner(selectedPartner, navigation)}
                     disabled={selectedPartner === null} // Disable the button if language is not selected
                 >
                     <Text style={styles.addButtonText}>Add</Text>
@@ -174,5 +183,7 @@ const styles = StyleSheet.create({
         textAlign: 'center',
       },
 });
+
+export { saveSelectedLanguagePartner };
 
 export default PartnerSelection;
