@@ -24,7 +24,7 @@ export class SpeechSynthesisService {
     if (chatbotId === this.frenchChatId) {
       return this.synthesizeWithPolly(text, 'Isabelle'); // Use 'Isabelle' voice for French
     } else if (chatbotId === this.englishChatId) {
-      return this.synthesizeWithOpenAI(text, 'onyx'); // Use 'onyx' voice for English
+      return this.synthesizeWithPolly(text, 'Matthew'); // Use 'onyx' voice for English
     } else {
       throw new Error('Invalid chatId');
     }
@@ -49,7 +49,7 @@ export class SpeechSynthesisService {
 
   private async synthesizeWithOpenAI(text: string, voice: string): Promise<Buffer> {
     const requestBody = {
-      model: 'tts-1-hd',
+      model: 'tts-1',
       input: text,
       voice: voice,
     };

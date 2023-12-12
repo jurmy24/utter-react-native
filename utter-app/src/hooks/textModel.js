@@ -6,7 +6,7 @@ const useTextModel = (chatbotId) => {
     try {
       // Call to server with deviceId, chatbotId, and message
       const gptResponse = await axios.post(
-        "http://192.168.10.152:3000/chat-model/submit",
+        "http://130.229.173.88:3000/chat-model/submit",
         {
           deviceId: uniqueId, // Use the unique deviceId
           chatbotId: chatbotId, // Pass the chatbotId that is used to initialize this hook

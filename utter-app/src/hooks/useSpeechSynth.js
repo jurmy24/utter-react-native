@@ -10,7 +10,7 @@ const useSpeechSynth = (chatbotId) => {
   const synthesizeText = async (text) => {
     try {
       const response = await axios.post(
-        "http://192.168.10.152:3000/speech-synthesis/synthesize",
+        "http://130.229.173.88:3000/speech-synthesis/synthesize",
         { chatbotId: chatbotId, message: text },
         { responseType: "arraybuffer" }
       );
@@ -80,10 +80,12 @@ const useSpeechSynth = (chatbotId) => {
   const stopAudio = async () => {
     try {
       if (currentSound) {
-        await currentSound.stopAsync();
-        // Optionally, unload the sound after stopping
-        await currentSound.unloadAsync();
-        setCurrentSound(null); // Reset the sound object
+        const status = await currentSound.getStatusAsync();
+        if (status.isLoaded) {
+          await currentSound.stopAsync();
+          await currentSound.unloadAsync();
+          setCurrentSound(null); // Reset the sound object
+        }
       }
     } catch (error) {
       console.error("Error stopping audio:", error);

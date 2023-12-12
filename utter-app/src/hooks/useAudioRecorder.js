@@ -13,30 +13,48 @@ const useAudioRecorder = () => {
   }, []);
 
   const startRecording = async () => {
+    // Check if there is an existing recording
     try {
+      // console.log(recording);
+      if (recording) {
+        // Stop the existing recording
+        await stopRecording();
+      }
+
       await Audio.setAudioModeAsync({
         allowsRecordingIOS: true,
         playsInSilentModeIOS: true,
       });
-      const { recording } = await Audio.Recording.createAsync(
+      // const { newRecording } = await Audio.Recording.createAsync(
+      //   Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
+      // );
+      const newRecording = new Audio.Recording();
+      await newRecording.prepareToRecordAsync(
         Audio.RECORDING_OPTIONS_PRESET_HIGH_QUALITY
       );
-      setRecording(recording);
+      await newRecording.startAsync();
       setIsRecording(true);
+      setRecording(newRecording);
     } catch (error) {
-      console.error("Failed to start recording", error);
+      console.error("(useAudioRecorder) StartRecording: ", error);
     }
   };
 
   const stopRecording = async () => {
-    setIsRecording(false);
-    await recording.stopAndUnloadAsync();
-    const uri = recording.getURI();
-    setRecordedUri(uri); // Save the recorded file's URI
-    setRecording(null);
-    return uri; // return the uri directly
+    let uri = null;
+    if (recording) {
+      try {
+        await recording.stopAndUnloadAsync();
+        uri = recording.getURI(); // Get the URI before setting the recording to null
+        setRecordedUri(uri); // Save the recorded file's URI
+        setRecording(null);
+        setIsRecording(false);
+      } catch (error) {
+        console.error("Error stopping recording:", error);
+      }
+    }
+    return uri; // Return the URI
   };
-
   return { isRecording, startRecording, stopRecording, recordedUri };
 };
 

@@ -14,7 +14,7 @@ export class ChatModelService {
 
   async getChatResponse(messages: any[]): Promise<string> {
     const requestBody = {
-      model: "gpt-3.5-turbo",
+      model: "gpt-3.5-turbo-1106",
       messages: messages,
     };
 

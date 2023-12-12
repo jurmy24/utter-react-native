@@ -7,6 +7,7 @@ import {
   SafeAreaView,
   ImageBackground,
   Image,
+  Alert,
 } from "react-native";
 import useFileUpload from "../../hooks/useFileUpload";
 import useAudioRecorder from "../../hooks/useAudioRecorder";
@@ -35,44 +36,68 @@ const CallView = ({ navigation }) => {
     chatbotId === "english-chatbot" ? "Tim" : "Claire";
 
   const { uploadAudioFile, uploadStatus, error } = useFileUpload(chatbotId);
+  const [transcribedMessage, setTranscribedMessage] = useState("");
   const { startRecording, stopRecording } = useAudioRecorder();
   const [isRecording, setIsRecording] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const { synthesizeText, playAudio, stopAudio } = useSpeechSynth(chatbotId);
   const { submitMessage } = useTextModel(chatbotId);
+  const [errorMessage, setErrorMessage] = useState("");
 
-  // const navigation = useNavigation(); // This hook is provided by React Navigation
+  const showError = (message) => {
+    setErrorMessage(message); // Set the actual message
+    Alert.alert("Error", message, [{ text: "OK" }]);
+  };
 
   /* -----------Handle verbal submission------------- */
-  const handleStartRecording = () => {
+
+  const handleStartRecording = async () => {
+    stopAudio();
     setIsRecording(true);
-    startRecording();
+    await startRecording();
   };
 
   const handleSendRecording = async () => {
-    setIsRecording(false);
     setIsLoading(true); // Start loading
-    let uri;
+    // Only send recording if we are actually recording
     if (isRecording) {
-      uri = await stopRecording(); // Stop the recording if it's still happening
-    } else {
-      console.error("I think the audio message was too short");
-    }
-
-    if (uri) {
       try {
-        const transcription = await uploadAudioFile(uri);
-        const gptResponse = await submitMessage(transcription);
-        const audioFilePath = await synthesizeText(gptResponse);
-        await playAudio(audioFilePath);
-      } catch (error) {
-        console.error("Error during file upload:", error);
-        // Handle errors in UI, such as showing an error message
+        const uri = await stopRecording(); // Stop the recording
+        setIsRecording(false);
+
+        if (!uri) {
+          // Handle the case where no recording was made
+          showError(
+            "Your audio message might've been too short to send. Please try again!"
+          );
+          setIsLoading(false);
+          return;
+        }
+
+        try {
+          const transcription = await uploadAudioFile(uri);
+          setTranscribedMessage(transcription);
+          const gptResponse = await submitMessage(transcription);
+          const audioFilePath = await synthesizeText(gptResponse);
+          setTranscribedMessage("");
+          await playAudio(audioFilePath);
+        } catch (uploadError) {
+          setTranscribedMessage("");
+          showError(
+            "There was an error processing your audio. Please try again."
+          );
+          // Log the error for debugging purposes
+          console.error("(CallView) handleSendRecording:", uploadError);
+        }
+      } catch (recordingError) {
+        showError("An error occurred while recording. Please try again.");
+        // Log the error for debugging purposes
+        console.error("Error during recording:", recordingError);
       }
     } else {
-      console.error("No recording found");
-      // Optionally handle the case where there is no recording
+      showError("No audio message detected. Please try recording again.");
     }
+
     setIsLoading(false); // Stop loading
   };
 
@@ -89,6 +114,13 @@ const CallView = ({ navigation }) => {
           <Text style={styles.chatbotName}>{languagePartnerName}</Text>
           <View style={{ marginVertical: 80 }}></View>
 
+          {transcribedMessage !== "" && (
+            <View style={styles.messageOverlay}>
+              <View style={styles.bubblyTextContainer}>
+                <Text style={styles.bubblyText}>{transcribedMessage}</Text>
+              </View>
+            </View>
+          )}
           {isLoading && (
             <View style={styles.loadingOverlay}>
               <BallIndicator color="blue" />
@@ -98,6 +130,7 @@ const CallView = ({ navigation }) => {
           <TouchableOpacity
             onPress={() => {
               stopAudio();
+              stopRecording();
               navigation.navigate("Chat", { chatbotId });
             }}
             style={styles.endCallButton}
@@ -106,6 +139,7 @@ const CallView = ({ navigation }) => {
           </TouchableOpacity>
 
           <TouchableOpacity
+            activeOpacity={1}
             onPressIn={handleStartRecording}
             onPressOut={handleSendRecording}
             style={{
@@ -124,6 +158,9 @@ const CallView = ({ navigation }) => {
             {isRecording ? "Recording..." : "Push and hold to talk"}
           </Text>
         </View>
+        {errorMessage !== "" && (
+          <Text style={styles.errorText}>{errorMessage}</Text>
+        )}
       </SafeAreaView>
     </ImageBackground>
   );
@@ -170,9 +207,41 @@ const styles = StyleSheet.create({
     right: 0,
     bottom: 0,
     // backgroundColor: "rgba(128, 128, 128, 0.5)", // Greyed out background
+    justifyContent: "flex-start",
+    paddingBottom: "40%",
+    alignItems: "center",
+    zIndex: 2, // Make sure it covers other content
+  },
+  messageOverlay: {
+    position: "absolute",
+    left: 0,
+    top: 0,
+    right: 0,
+    bottom: 0,
+    // backgroundColor: "rgba(128, 128, 128, 0.5)", // Greyed out background
     justifyContent: "center",
     alignItems: "center",
     zIndex: 1, // Make sure it covers other content
+    paddingHorizontal: 20,
+  },
+  errorText: {
+    color: "red",
+    textAlign: "center",
+    // other styles as needed
+  },
+  bubblyTextContainer: {
+    marginTop: 20, // Adjust the space between the indicator and the text
+    paddingHorizontal: 20, // Side padding for text container
+    paddingVertical: 10, // Vertical padding for text container
+    backgroundColor: "white", // Background color for the bubbly text
+    borderRadius: 25, // Rounded corners for the bubbly feel
+    // Add shadow or other styles to enhance the bubbly effect
+  },
+  bubblyText: {
+    fontSize: 16, // Adjust as needed
+    color: "black", // Text color
+    textAlign: "center", // Center-align text
+    // Additional text styles if needed
   },
 });
 

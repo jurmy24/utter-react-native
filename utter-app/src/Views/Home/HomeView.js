@@ -29,7 +29,7 @@ const HomeView = () => {
   const refreshChatHistory = async (chatbotId) => {
     try {
       const response = await axios.get(
-        `http://192.168.10.152:3000/message-history/latest`,
+        `http://130.229.173.88:3000/message-history/latest`,
         {
           params: { deviceId: uniqueId, chatbotId },
         }
