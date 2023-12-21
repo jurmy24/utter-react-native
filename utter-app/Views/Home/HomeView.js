@@ -33,7 +33,7 @@ const HomeView = () => {
       </ScrollView>
       
       {/* "+" Button at the top */}
-      <TouchableOpacity style={generalStyles.addButton} onPress={() => {/* Action for the "+" button */}}>
+      <TouchableOpacity style={generalStyles.addButton} onPress={() => navigation.navigate('Languages')}>
         <Text style={generalStyles.circularButtonText}>+</Text>
       </TouchableOpacity>
 

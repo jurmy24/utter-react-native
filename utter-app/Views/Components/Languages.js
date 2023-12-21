@@ -4,6 +4,7 @@ import { View, Image, StyleSheet } from "react-native";
 const flagImages = {
   "us-flag": require("../../assets/images/us-flag.png"),
   "french-flag": require("./../../assets/images/french-flag.png"),
+  "german-flag": require("./../../assets/images/german-flag.png")
 };
 
 const Language = ({ languageId, size }) => {

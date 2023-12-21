@@ -92,15 +92,6 @@ const PartnerSelection = () => {
                         </TouchableOpacity>
                         <View style={styles.divider} />
 
-                    {/* This TouchableOpacity should update its state when pressed*/}
-                        <TouchableOpacity
-                            onPress={() => handlePartnerRowPress('french-chatbot')}
-                        >
-                            <LanguagePartnerRow/>
-                        </TouchableOpacity>
-
-                        <View style={styles.divider} />
-
                         {/* Add more LanguagePartnerRows here as needed */}   
                 </View>
                 {/* Add Button at the bottom */}
@@ -170,6 +161,7 @@ const styles = StyleSheet.create({
       addButton: {
         borderRadius: 10,
         backgroundColor: '#CFD7FF',
+        marginVertical: 10,
         paddingVertical: 20,
         marginLeft: 12,
         marginRight: 12,

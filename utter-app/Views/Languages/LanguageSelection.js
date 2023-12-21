@@ -64,6 +64,7 @@ const LanguageSelection = () => {
           </View>
           
           <View style={styles.languageList}>
+
             {/* Language Rows */}
             <TouchableOpacity onPress={() => handleLanguageRowPress('us-flag')}>
               <LanguageRow 
@@ -78,6 +79,12 @@ const LanguageSelection = () => {
                 isSelected={selectedLanguage==='french-flag'}
               />
             </TouchableOpacity>
+
+            {/* German is not available yet! */}
+                <LanguageRow 
+                languageId="german-flag"
+                isSelected={selectedLanguage==='german-flag'}
+                />
 
             {/* Add more LanguageRows here as needed */}
           </View>
@@ -115,6 +122,12 @@ const styles = StyleSheet.create({
     marginTop: 10, // Adjust as needed
     backgroundColor: "#FFFFFF",
     // Add shadow or other styles as needed
+  },
+  languageContainer: {
+    backgroundColor: 'gray',
+    width: 'auto', // Adjust as needed
+    height: 'auto', // Adjust as needed
+    overflow: "hidden", // Ensures the image is cropped into a circle
   },
 
   mediumText: {
