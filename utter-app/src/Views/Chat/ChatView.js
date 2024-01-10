@@ -25,7 +25,7 @@ const assetsPath = "../../assets/";
 
 const initializeSocket = (chatbotId) => {
   const deviceId = uniqueId;
-  return io("http://130.229.173.88:3000", {
+  return io("http://192.168.181.202:3000", {
     query: { deviceId, chatbotId },
   });
 };
