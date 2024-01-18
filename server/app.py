@@ -1,5 +1,5 @@
 from flask import Flask
-from flaskapp.api.message_routes import message_blueprint
+from api.message_routes import message_blueprint
 # If using Flask-SocketIO
 # from flask_socketio import SocketIO
 

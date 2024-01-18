@@ -1,8 +1,8 @@
 from flask import Blueprint, request, jsonify
-from flaskapp.services.transcription_service import transcribe_audio
-from flaskapp.services.chat_generation_service import dialogue_with_openai
-from flaskapp.services.speech_synthesis_service import synthesize_speech_with_polly
-from flaskapp.services.message_history_service import get_message_history, update_message_history
+from services.transcription_service import transcribe_audio
+from services.chat_generation_service import dialogue_with_openai
+from services.speech_synthesis_service import synthesize_speech_with_polly
+from services.message_history_service import get_message_history, update_message_history
 
 message_blueprint = Blueprint('message_api', __name__)
 
