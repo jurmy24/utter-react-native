@@ -4,6 +4,7 @@ import openai
 from dotenv import load_dotenv
 import json
 import time
+from utils.openai import openai_request
 
 
 """Setup"""
@@ -40,15 +41,16 @@ timestamps=[time.time()]
 
 """Helper Functions"""
 def send_message(messages):
-    completion = openai.ChatCompletion.create(
-        model=MODEL,
-        messages=messages,
-        temperature=TEMPERATURE,
-        max_tokens=MAX_TOKENS
-    )
-
+    # Use the openai_request function from utils
+    response = openai_request({
+        "model": MODEL,
+        "messages": messages,
+        "temperature": TEMPERATURE,
+        "max_tokens": MAX_TOKENS
+    })
+    
     # Return the chat response from the API response.
-    return completion.choices[0].message["content"]
+    return response['choices'][0]['message']['content']
 
 def save_conversation(messages, timestamps):
     conversation_data = {
@@ -66,6 +68,15 @@ def load_conversation():
 
 
 def chat(content: str) -> str:
+    # Load the conversation if it exists
+    conversation = load_conversation()
+    if conversation["messages"]:
+        messages = conversation["messages"]
+        timestamps = conversation["timestamps"]
+    else:
+        messages = [{"role": "system", "content": admin_prompt}]
+        timestamps = [time.time()]
+
     messages.append({"role": "user", "content": content})
     timestamps.append(time.time())
     response = send_message(messages)
@@ -78,8 +89,8 @@ def chat(content: str) -> str:
 
 
 def dialogue_with_openai(transcription):
-    # Placeholder function to send transcription to OpenAI and get the reply
-    pass
+    response = chat(transcription)
+    return response
 
 
 
