@@ -1,28 +1,26 @@
 from flask import Blueprint, request, jsonify
-from services.transcription_service import transcribe_audio
+from services.transcription_service import transcribe_audio_service
 from services.chat_generation_service import dialogue_with_openai
 from services.speech_synthesis_service import synthesize_speech_with_polly
 from services.message_history_service import get_message_history, update_message_history
+import numpy as np
 
 message_blueprint = Blueprint('message_api', __name__)
 
 @message_blueprint.route('/message/audio', methods=['POST'])
 def handle_audio_message():
-    # Extract audio file from the request
-    audio_file = request.files.get('audio')
+    if 'audio' in request.files:
+        # Read the file and convert it into the required format
+        audio_file = request.files['audio']
+        audio_data = np.fromstring(audio_file.read(), np.int16)  # Update the data type and reading method based on the actual audio file
 
-    # Transcribe the audio file
-    transcription = transcribe_audio(audio_file)
+        # Transcribe the audio
+        transcription = transcribe_audio_service(audio_data, model='base')
 
-    # Process dialogue and synthesis
-    openai_reply, speech_file_url = process_dialogue_and_synthesis(transcription)
+        return jsonify({'transcription': transcription})
 
-    # Return response
-    return jsonify({
-        'transcription': transcription,
-        'reply': openai_reply,
-        'speech_file_url': speech_file_url
-    })
+    return jsonify({'error': 'No audio file provided'}), 400
+
 
 @message_blueprint.route('/message/text', methods=['POST'])
 def handle_text_message():
