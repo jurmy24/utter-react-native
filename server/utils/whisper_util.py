@@ -2,7 +2,14 @@ import whisper
 import os
 import tempfile
 from scipy.io.wavfile import write
+import backoff
+import logging
 
+# Set up basic logging configuration
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
+
+@backoff.on_exception(backoff.expo, Exception, max_tries=10, max_time=300)
 def transcribe_audio_with_whisper(audio_data, model_name='base'):
     # Load the model
     model = whisper.load_model(model_name)

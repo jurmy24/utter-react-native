@@ -3,6 +3,7 @@ from botocore.exceptions import BotoCoreError, ClientError
 import logging
 from dotenv import load_dotenv
 import os
+import backoff
 
 # Load environment variables
 load_dotenv()
@@ -18,6 +19,8 @@ def get_polly_client():
                         aws_secret_access_key=os.getenv('AWS_SEC_ACC_KEY'),
                         region_name='eu-west-3')
 
+
+@backoff.on_exception(backoff.expo, (BotoCoreError, ClientError), max_tries=10, max_time=300)
 def synthesize_speech(text, voice_id='Matthew', language_code='en-US', output_format='mp3'):
     client = get_polly_client()
     try:
