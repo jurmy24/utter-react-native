@@ -1,23 +1,15 @@
 import { useState } from "react";
 import * as FileSystem from "expo-file-system";
 import { Audio } from "expo-av";
-import axios from "axios";
 import base64 from "react-native-base64";
 
-const useSpeechSynth = (chatbotId) => {
-  // State to keep track of the currently playing sound
-  const [currentSound, setCurrentSound] = useState(null);
-  const synthesizeText = async (text) => {
-    try {
-      const response = await axios.post(
-        "http://192.168.181.202:3000/speech-synthesis/synthesize",
-        { chatbotId: chatbotId, message: text },
-        { responseType: "arraybuffer" }
-      );
+const handleAudioResponse = async (audioData) => {
+    // State to keep track of the currently playing sound
+    const [currentSound, setCurrentSound] = useState(null);
 
       // Convert the audio stream to a base64 string
       const base64Audio = base64.encodeFromByteArray(
-        new Uint8Array(response.data)
+        new Uint8Array(audioData.data)
       );
 
       // Handle the audio stream returned from the server
@@ -30,11 +22,7 @@ const useSpeechSynth = (chatbotId) => {
       });
 
       return audioFilePath;
-    } catch (error) {
-      console.error("Error requesting text synthesis:", error);
-      throw error;
     }
-  };
 
   const playAudio = async (filePath) => {
     try {
@@ -92,7 +80,7 @@ const useSpeechSynth = (chatbotId) => {
     }
   };
 
-  return { synthesizeText, playAudio, stopAudio };
-};
 
-export default useSpeechSynth;
+
+
+export default {handleAudioResponse, playAudio, stopAudio}

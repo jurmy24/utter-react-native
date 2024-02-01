@@ -1,4 +1,4 @@
-from utils.whisper_util import transcribe_audio_with_whisper
+from server.utils.whisper_util import transcribe_audio_with_whisper
 
 def transcribe_audio_service(audio_data, model='base'):
     try:

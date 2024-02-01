@@ -4,7 +4,7 @@ import openai
 from dotenv import load_dotenv
 import json
 import time
-from utils.openai import openai_request
+from server.utils.openai import openai_request
 
 
 """Setup"""

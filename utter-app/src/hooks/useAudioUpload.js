@@ -1,13 +1,14 @@
 import { useState } from "react";
 import axios from "axios";
 import uniqueId from "../uuid_file"; // Assuming you have a file that exports the unique deviceId
+import handleAudio from "./useAudioHandler"
 
 const getFileExtension = (uri) => {
   const match = /\.(\w+)$/.exec(uri);
   return match ? match[1].toLowerCase() : null;
 };
 
-const useFileUpload = (chatId) => {
+const useAudioUpload = (chatId) => {
   const [uploadStatus, setUploadStatus] = useState(null);
   const [error, setError] = useState(null);
 
@@ -24,7 +25,7 @@ const useFileUpload = (chatId) => {
 
     try {
       const response = await axios.post(
-        "http://192.168.181.202:3000/transcription/upload",
+        "http://localhost:5000/message/audio",
         formData,
         {
           headers: {
@@ -32,8 +33,14 @@ const useFileUpload = (chatId) => {
           },
         }
       );
+
       setUploadStatus("success");
-      return response.data.transcription;
+
+      audioFilePath = handleAudio(response)
+      
+      return audioFilePath;
+
+
     } catch (err) {
       setUploadStatus("failed");
       setError(err);

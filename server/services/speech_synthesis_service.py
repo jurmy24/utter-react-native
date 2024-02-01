@@ -1,5 +1,5 @@
 import os
-from utils.polly_util import synthesize_speech
+from server.utils.polly_util import synthesize_speech
 import time
 
 # Map languages to Amazon Polly voices and language codes

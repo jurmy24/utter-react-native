@@ -1,8 +1,8 @@
 from flask import Blueprint, request, jsonify
-from services.transcription_service import transcribe_audio_service
-from services.chat_generation_service import dialogue_with_openai
-from services.speech_synthesis_service import synthesize_speech_with_polly
-from services.message_history_service import get_message_history, update_message_history
+from server.services.transcription_service import transcribe_audio_service
+from server.services.chat_generation_service import dialogue_with_openai
+from server.services.speech_synthesis_service import synthesize_speech_with_polly
+from server.services.message_history_service import get_message_history, update_message_history
 import numpy as np
 
 message_blueprint = Blueprint('message_api', __name__)
@@ -36,6 +36,7 @@ def handle_text_message():
         'speech_file_url': speech_file_url
     })
 
+#TODO: Go through this route and functions to have functiioning logic
 @message_blueprint.route('/message/history', methods=['GET'])
 def get_history():
     # Retrieve message history

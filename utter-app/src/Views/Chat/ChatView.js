@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { BallIndicator } from "react-native-indicators";
-import useTextModel from "../../hooks/textModel";
+import useTextModel from "../../hooks/useTextUpload";
 import io from "socket.io-client";
 import uniqueId from "../../uuid_file";
 import { useRoute, useNavigation } from "@react-navigation/native";

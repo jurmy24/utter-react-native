@@ -1,10 +1,14 @@
+import os
 from flask import Flask
-from api.message_routes import message_blueprint
+from server.api.message_routes import message_blueprint
 # If using Flask-SocketIO
 # from flask_socketio import SocketIO
 
+print(__name__)
+
 app = Flask(__name__)
 app.register_blueprint(message_blueprint)
+print("Started server....")
 
 # socketio = SocketIO(app)
 # Here you would initialize Flask-SocketIO if using WebSockets

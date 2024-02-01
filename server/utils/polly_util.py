@@ -33,3 +33,6 @@ def synthesize_speech(text, voice_id='Matthew', language_code='en-US', output_fo
     except (BotoCoreError, ClientError) as error:
         logger.error(f"Could not synthesize speech with Amazon Polly: {error}")
         raise
+    except Exception as error:
+        logger.error(f"Unexpected error occured while synthesizing speech: {error}")
+        raise

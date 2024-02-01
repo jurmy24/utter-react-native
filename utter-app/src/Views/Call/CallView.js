@@ -9,14 +9,14 @@ import {
   Image,
   Alert,
 } from "react-native";
-import useFileUpload from "../../hooks/useFileUpload";
+import useFileUpload from "../../hooks/useAudioUpload";
 import useAudioRecorder from "../../hooks/useAudioRecorder";
-import useSpeechSynth from "../../hooks/useSpeechSynth";
+import useSpeechSynth from "../../hooks/useAudioHandler";
 import Avatar from "../Components/Avatars";
 import { useRoute } from "@react-navigation/native";
 import { generalStyles } from "../stylesheets/general_styles";
 import { BallIndicator } from "react-native-indicators";
-import useTextModel from "../../hooks/textModel";
+import useTextModel from "../../hooks/useTextUpload";
 
 // import PartnerImage from './PartnerImage'; // Assuming you have this component
 // import LoadingBalls from './LoadingBalls'; // Assuming you have this component
