@@ -13,7 +13,7 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { BallIndicator } from "react-native-indicators";
-import useTextModel from "../../hooks/useTextUpload";
+import useTextUpload from "../../hooks/useTextUpload";
 import io from "socket.io-client";
 import uniqueId from "../../uuid_file";
 import { useRoute, useNavigation } from "@react-navigation/native";
@@ -40,7 +40,7 @@ const ChatView = () => {
 
   // TODO: set a local chatId in the parameters of this to distinguish between the different chats a user can have
   const [inputText, setInputText] = useState("");
-  const { submitMessage } = useTextModel(chatbotId);
+  const { submitMessage } = useTextUpload(chatbotId);
   const [isLoading, setIsLoading] = useState(false);
   const [chatHistory, setChatHistory] = useState([]);
   const deviceId = uniqueId;

@@ -25,7 +25,7 @@ const useAudioUpload = (chatId) => {
 
     try {
       const response = await axios.post(
-        "http://localhost:5000/message/audio",
+        "http://192.168.1.233:5000/message/audio",
         formData,
         {
           headers: {
@@ -42,6 +42,7 @@ const useAudioUpload = (chatId) => {
 
 
     } catch (err) {
+      print("Error in usaAudioUpload.uploadAudiofile: " + err)
       setUploadStatus("failed");
       setError(err);
       throw err; // rethrow the error for handling in the component
@@ -51,4 +52,4 @@ const useAudioUpload = (chatId) => {
   return { uploadAudioFile, uploadStatus, error };
 };
 
-export default useFileUpload;
+export default useAudioUpload;

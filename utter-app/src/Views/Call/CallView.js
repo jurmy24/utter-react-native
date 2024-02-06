@@ -9,7 +9,7 @@ import {
   Image,
   Alert,
 } from "react-native";
-import useFileUpload from "../../hooks/useAudioUpload";
+import useAudioUpload from "../../hooks/useAudioUpload";
 import useAudioRecorder from "../../hooks/useAudioRecorder";
 import useSpeechSynth from "../../hooks/useAudioHandler";
 import Avatar from "../Components/Avatars";
@@ -35,7 +35,7 @@ const CallView = ({ navigation }) => {
   const languagePartnerName =
     chatbotId === "english-chatbot" ? "Tim" : "Claire";
 
-  const { uploadAudioFile, uploadStatus, error } = useFileUpload(chatbotId);
+  const { uploadAudioFile, uploadStatus, error } = useAudioUpload(chatbotId);
   const [transcribedMessage, setTranscribedMessage] = useState("");
   const { startRecording, stopRecording } = useAudioRecorder();
   const [isRecording, setIsRecording] = useState(false);
