@@ -96,8 +96,8 @@ def dialogue_with_openai(transcription):
 
 if __name__ == "__main__":
     # Start the conversation with a greeting from Tim.
-    start_greeting = start_conversation()
-    print(start_greeting)
+    # start_greeting = start_conversation()
+    # print(start_greeting)
     # Continue the conversation with the user.
     while True:
         # User creates content by writing to terminal and this is appended to messages

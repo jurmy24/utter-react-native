@@ -14,6 +14,7 @@ print("Started server....")
 # Here you would initialize Flask-SocketIO if using WebSockets
 
 if __name__ == '__main__':
+    # flask --app app.py --debug run 
     # socketio.run(app, debug=True)  # If using Flask-SocketIO
     app.run(debug=True)
 

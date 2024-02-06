@@ -9,6 +9,7 @@ message_blueprint = Blueprint('message_api', __name__)
 
 @message_blueprint.route('/message/audio', methods=['POST'])
 def handle_audio_message():
+    print("In audio!")
     if 'audio' in request.files:
         # Read the file and convert it into the required format
         audio_file = request.files['audio']
@@ -24,8 +25,16 @@ def handle_audio_message():
 
 @message_blueprint.route('/message/text', methods=['POST'])
 def handle_text_message():
+    print("Handling text message on server")
     # Extract text message from the request
-    text_message = request.json.get('text')
+    text_message = request.json.get('text', None)
+
+    if text_message is None:
+        return jsonify({
+        'Error': "Missing text in body..."
+    }), 400
+
+    print("The sent message is: " + text_message)
 
     # Process dialogue and synthesis
     openai_reply, speech_file_url = process_dialogue_and_synthesis(text_message)
